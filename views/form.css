@@ -1,0 +1,80 @@
+@media (max-width: 576px) {
+    .mobile {
+        display: flex;
+        flex-direction: column-reverse; 
+    }
+}
+:root {
+    --blue: #50574f;
+    --black: #0f0c0c;
+  }
+
+#yourElement {
+    width: 272px;
+    height: 272px;
+    border: 1px solid #000;
+   
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+
+#result {
+    margin-top: 20px;
+    font-size: 20px;
+}
+.barcode{
+    height: 100px;
+}
+#Reg_no{
+    width: 300px;
+    border: inset black 2px;
+    
+}
+
+.head{
+    text-decoration: wavy ;
+    font-weight: bold;
+    font-size: 35px;
+    color: var(--blue);
+    text-shadow: 2px 2px 4px gray;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.submit-btn{
+    width: 300px;
+    height: 55px;
+    color: white;
+    border-radius: 4px;
+    border: var(--black) solid 2px;
+    background-color: var(--blue);
+}
+.submit-btn:hover{
+    background-color: #7d817c;
+}
+.head1{
+    text-decoration: wavy ;
+    font-weight: bold;
+    font-size: 25px;
+    color: var(--blue);
+    text-shadow: 2px 2px 4px gray;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.text-box{
+    border: solid black 2px;
+    height: auto;
+    border-radius: 4px;
+}
+.submit-btn2{
+    width: 260px;
+    height: 55px;
+    color: white;
+    border-radius: 4px;
+    border: var(--black) solid 2px;
+    background-color: var(--blue);
+}
+.submit-btn2:hover{
+    background-color: #7d817c;
+}

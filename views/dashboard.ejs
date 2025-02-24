@@ -1,0 +1,432 @@
+<% function getOrdinal(num) { const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]} %>
+<div class="container mt-5">
+  <% if (typeof tutor === 'undefined') { %>
+  <h2 class="h2">Dashboard</h2>
+  <% } else{ %>
+  <h2 class="h2">Tutor Dashboard - <%= YOS %> <%= section %></h2>
+  <% }  %>
+
+
+  <hr class="hr">
+
+  <!-- Records -->
+  <!-- Check if -->
+  <% if (typeof tutor === 'undefined') { %>
+  <div class="card p-3">
+    <h3 class="h3">Attendance Records for <%= dept  %></h3>
+    <div class="form-group row">
+      <div class="col-md-4">
+        <label for="yearDropdown">Year of Study</label>
+        <select id="yearDropdown" class="form-control">
+          <option value="">All Years</option>
+          <%  const uniqueYears = records.reduce((acc, record) => {
+          if (!acc.includes(record.YearOfStudy)) {
+            acc.push(record.YearOfStudy);
+          }
+          return acc;
+        }, []);  
+        uniqueYears.sort();
+        %>
+          <% uniqueYears.forEach(year => { %>
+          <option value="<%= year %>">
+            <%= year %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="sectionDropdown">Section</label>
+        <select id="sectionDropdown" class="form-control" disabled>
+          <option value="">All Sections</option>
+          <%  const uniqueSections = records.reduce((acc, record) => {
+          if (!acc.includes(record.Section)) {
+            acc.push(record.Section);
+          }
+          return acc;
+        }, []);  
+        uniqueSections.sort();
+        %>
+          <% uniqueSections.forEach(section => { %>
+          <option value="<%= section %>">
+            <%= section %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="dateFilter">Date</label>
+        <input type="date" id="dateFilter" class="form-control">
+      </div>
+    </div>
+
+    <label class="switch">
+      <div class="font-weight-bold">Condensed view - </div>
+      <input type="checkbox" id="joinByClassSwitch">
+      <span for="joinByClassSwitch" class="slider round"></span>
+    </label>
+
+    <table class="table table-striped mt-4" id="detailedTable">
+      <thead class="thead-dark">
+        <tr>
+          <th>Reg. No.</th>
+          <th>Name</th>
+          <th>Year of Study</th>
+          <th>Section</th>
+          <th>Date and Time</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceTable">
+
+
+        <% records.forEach(record => { %>
+        <tr>
+          <td><%= record.Reg_No %></td>
+          <td><%= record.Student_name %></td>
+          <td><%= record.YearOfStudy %></td>
+          <td><%= record.Section %></td>
+          <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+          <td><%= record.Reason %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+
+    <table class="table table-striped mt-4 d-none" id="summaryTable">
+      <thead class="thead-dark">
+        <tr>
+          <th>Year of Study</th>
+          <th>Section</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody id="summaryTableBody">
+      </tbody>
+    </table>
+  </div>
+  <hr class="hr">
+  <% }%>
+  <!-- Graphs -->
+  <div class="card p-3 ">
+    <h3 class="h3">Graph</h3>
+    <% if (typeof tutor === 'undefined') { %>
+
+    <small class="text-muted">Classes with no late attendance recorded are not shown below</small>
+    <% }%>
+
+    <div class="row">
+      <div class="col-md-6">
+        <% if (typeof tutor === 'undefined') { %>
+        <label for="yearDropdown1">Year of Study</label>
+        <select id="yearDropdown1" class="form-control">
+          <option value="0">All Years</option>
+          <%  const uniqueYears1 = records.reduce((acc, record) => {
+          if (!acc.includes(record.YearOfStudy)) {
+            acc.push(record.YearOfStudy);
+          }
+          return acc;
+        }, []);  
+        uniqueYears1.sort();
+        %>
+          <% uniqueYears1.forEach(year => { %>
+          <option value="<%= year %>">
+            <%= year %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <% }%>
+
+      <div class="col-md-6 mb-4">
+        <!-- Number of Days -->
+        <label for="daysDropdown1">Number of Days</label>
+        <select id="daysDropdown1" class="form-control">
+          <option value="7">Last 7 Days</option>
+          <option value="14">Last 14 Days</option>
+          <option value="30" selected>Last 30 Days</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="container" id="chartsContainer">
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
+
+
+
+  <hr class="hr">
+
+  <!-- Quick Student Lookup -->
+  <div class="card p-4">
+    <h3 class="h3 text-center mb-3">Quick Student Lookup</h3>
+    <p class="text-muted text-center mb-4">
+      Enter the student's registration number to quickly view their details.
+    </p>
+    <form action="/fetchStudentDetails" method="GET" class="d-flex justify-content-center">
+      <div class="btn-group w-auto mb-3" role="group">
+        <input type="text" name="reg_no" class="form-control form-control-lg rounded-0" placeholder="Registration Number" required>
+        <button type="submit" class="btn btn-primary btn-lg rounded-right">Search</button>
+      </div>
+    </form>
+  </div>
+
+  <hr class="hr">
+
+  <!-- Recent Activity -->
+  <div class="card p-3" style=" margin-bottom: 70px;">
+    <h3 class="h3">Recent Activity (last 10)</h3>
+    <ul class="list-group list-group-flush">
+      <% recentActivities.forEach(activity=> { %>
+      <li class="list-group-item">
+        <%= activity.Reg_No %> - <%= getOrdinal(activity.YearOfStudy) %> Year - <%= activity.Section %> - <%=
+                    activity.Student_name %>
+        <span class="recent_record float-right">
+          <%= new Date(activity.Late_Date).toLocaleString('en-US', { weekday: 'short' , month: 'short' ,
+                        day: '2-digit' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' , second: '2-digit' ,
+                        hour12: false }) %>
+        </span>
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Script for displaying records - Condensed and Detailed -->
+<script>
+  const dataFromAPI = <%- JSON.stringify(attendanceResults) %>;
+  const allRecords =  <%- JSON.stringify(records) %>;
+  <% if (typeof tutor === 'undefined') { %>
+  document.addEventListener('DOMContentLoaded', function() {
+    const yearDropdown = document.getElementById('yearDropdown');
+    const sectionDropdown = document.getElementById('sectionDropdown');
+    const dateFilter = document.getElementById('dateFilter');
+    const joinByClassSwitch = document.getElementById('joinByClassSwitch'); // Switch element for joining records by class
+    const detailedTable = document.getElementById('detailedTable');
+    const summaryTable = document.getElementById('summaryTable');
+    const summaryTableBody = document.getElementById('summaryTableBody');
+
+    // Set the default date to today
+    const today = new Date();
+    const todayString = today.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+    dateFilter.value = todayString;
+
+    function filterRecords() {
+      const year = yearDropdown.value;
+      const section = sectionDropdown.value;
+      const date = dateFilter.value;
+      const tableBody = document.getElementById('attendanceTable');
+      tableBody.innerHTML = '';
+
+      const filteredRecords = allRecords.filter(record => {
+        const matchesYear = year === '' || record.YearOfStudy.toString() === year;
+        const matchesSection = section === '' || record.Section === section;
+        const matchesDate = date === '' || new Date(record.Late_Date).toISOString().slice(0, 10) === date;
+        return matchesYear && matchesSection && matchesDate;
+      });
+
+      if (joinByClassSwitch.checked) {
+        detailedTable.classList.add('d-none');
+        summaryTable.classList.remove('d-none');
+        createSummaryTable(filteredRecords);
+      } else {
+        detailedTable.classList.remove('d-none');
+        summaryTable.classList.add('d-none');
+        filteredRecords.forEach(record => {
+          const row = `<tr>
+  <td>${record.Reg_No}</td>
+  <td>${record.Student_name}</td>
+  <td>${record.YearOfStudy}</td>
+  <td>${record.Section}</td>
+  <td>${new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+  <td>${record.Reason}</td>
+</tr>`;
+          tableBody.insertAdjacentHTML('beforeend', row);
+        });
+      }
+    }
+
+    function createSummaryTable(records) {
+      if (records.length === 0) {
+        summaryTableBody.innerHTML = '<tr ><td colspan="3" class="text-center">No records found for the Given criterias</td></tr>';
+        return;
+      }
+      summaryTableBody.innerHTML = '';
+      const summary = records.reduce((acc, record) => {
+        const key = `${record.YearOfStudy}-${record.Section}`;
+        if (!acc[key]) {
+          acc[key] = {
+            YearOfStudy: record.YearOfStudy,
+            Section: record.Section,
+            Count: 0
+          };
+        }
+        acc[key].Count++;
+        return acc;
+      }, {});
+      const department = "<%= dept %>".toLocaleLowerCase();
+      Object.values(summary).forEach(record => {
+        const row = `<tr onclick="window.location.href = 'records/${department}/${record.YearOfStudy}/${record.Section}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+  <td>${record.YearOfStudy}</td>
+  <td>${record.Section}</td>
+  <td>${record.Count}</td>
+</tr>`;
+        summaryTableBody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    yearDropdown.addEventListener('change', () => {
+      sectionDropdown.disabled = yearDropdown.value === "";
+      filterRecords();
+    });
+    sectionDropdown.addEventListener('change', filterRecords);
+    dateFilter.addEventListener('change', filterRecords);
+    document.getElementById("joinByClassSwitch").checked = true
+    filterRecords()
+    joinByClassSwitch.addEventListener('change', filterRecords);
+  });
+  <% } %>
+</script>
+
+<script>
+  const yearDropdown1 = document.getElementById("yearDropdown1")
+
+
+  function generateLastXDays(n) {
+    const dates = [];
+    const now = new Date();
+    for (let i = n - 1; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(now.getDate() - i);
+      date.setUTCHours(0, 0, 0, 0);
+      const formattedDate = date.toISOString().split('T')[0];
+      dates.push(formattedDate.slice(8, 10) + '-' + formattedDate.slice(5, 7));
+    }
+    return dates;
+  }
+  const daysDropdown1 = document.getElementById("daysDropdown1")
+
+  // async function fetchDailyAttendance() {
+  //   const response = await fetch('/api/hod-dashboard/daily', {
+  //     method: 'GET',
+  //       mode: 'no-cors'
+  //   });
+  //   console.log(response)
+
+  //   data = await response.json();
+  //   // console.log(response)
+  //   // console.log(data)
+
+  //   return data
+  // }
+
+  function normalizeDate(dateString) {
+    const date = new Date(dateString);
+    date.setUTCMinutes(date.getUTCMinutes() - date.getTimezoneOffset());
+    date.setUTCHours(0, 0, 0, 0);
+    const formattedDate = date.toISOString().split('T')[0];
+    return formattedDate.slice(8, 10) + '-' + formattedDate.slice(5, 7); //Returns a DD-MM format
+  }
+
+  function processAttendanceData(data, class1) {
+    const groupedData = {};
+    const lastXDays = generateLastXDays(daysDropdown1.value);
+    data.forEach(record => {
+      if (record.YearOfStudy.toString() === class1 || class1 === "0") {
+        const key = `${record.YearOfStudy} - ${record.Section}`;
+        const normalizedRecordDate = normalizeDate(record.lateDate);
+
+        if (!groupedData[key]) {
+          groupedData[key] = {
+            counts: Array(lastXDays.length).fill(0)
+          };
+        }
+        const dateIndex = lastXDays.indexOf(normalizedRecordDate);
+        if (dateIndex !== -1) {
+          groupedData[key].counts[dateIndex] = record.lateCount;
+        }
+      }
+    });
+
+    return {
+      groupedData,
+      lastXDays
+    };
+  }
+
+  async function createDailyCharts() {
+    // const dataFromAPI = await fetchDailyAttendance();
+    yod1 = "0"
+    if (yearDropdown1 !== null) {
+      yod1 = yearDropdown1.value
+    }
+    const {
+      groupedData,
+      lastXDays
+    } = processAttendanceData(dataFromAPI, yod1);
+    const chartContainer = document.getElementById('chartsContainer');
+    chartContainer.innerHTML = '';
+
+    const canvas = document.createElement('canvas');
+    chartContainer.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const datasets = Object.keys(groupedData).map((key, index) => ({
+      label: key,
+      data: groupedData[key].counts,
+      borderColor: `hsl(${(index * 50) % 360}, 70%, 50%)`,
+      backgroundColor: `hsla(${(index * 50) % 360}, 70%, 50%, 0.2)`,
+      fill: false,
+      tension: 0.1
+    }));
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: lastXDays,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Count'
+            },
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+              callback: function(value) {
+                return Number.isInteger(value) ? value : null;
+              }
+            },
+          },
+        }
+      }
+    });
+  }
+
+  createDailyCharts();
+
+  <% if (typeof tutor === 'undefined') { %>
+  yearDropdown1.addEventListener("change", () => {
+    createDailyCharts();
+  })
+  <% } %>
+  daysDropdown1.addEventListener("change", () => {
+    createDailyCharts();
+  })
+</script>

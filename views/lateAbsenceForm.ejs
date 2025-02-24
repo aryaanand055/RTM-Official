@@ -1,0 +1,163 @@
+<div class="container">
+
+  <h1 class="m-5"><span class="text-danger text-center">Fetch Student Data </span><span class="text-secondary"></span>and
+    </span><span class="text-primary">Absence</span></h1>
+  <div class="container-fluid container">
+
+    <form id="absenceForm" method="POST">
+      <div class="form-group">
+        <label for="Reg_no">Registration Number:</label>
+        <div class="input-group mb-3">
+          <input type="text" id="Reg_no" name="Reg_no" required title="Input" class="form-control w-75" placeholder="Ex: 715524104021">
+          <button type="submit" class="btn btn-outline-primary w-25">Verify</button>
+        </div>
+        <button type="button" id="restartScan" class="btn btn-secondary w-75 mx-5">
+          <i class="bi bi-qr-code-scan"></i> Reset and Scan Barcode
+        </button>
+        <div id="barcodeCont"></div>
+      </div>
+    </form>
+
+    <div id="studentData" class="border-1 m-2 p-2">
+      <h2>Please verify the student information</h2>
+      <p><strong>Student Name:</strong> <span id="studentName"></span></p>
+      <p><strong>Department:</strong> <span id="department"></span></p>
+      <p><strong>Section:</strong> <span id="section"></span></p>
+      <p><strong>Mobile Number:</strong> <span id="mobNo"></span></p>
+      <p><strong>Email:</strong> <span id="mailId"></span></p>
+      <p><strong>Residence:</strong> <span id="residence"></span></p>
+
+      <form id="absenceReasonForm" method="POST" action="/save-absence">
+        <label for="reason"><strong>Reason for Absence:</strong></label>
+        <input type="text" id="reason" name="reason" required></input>
+        <input type="text" id="Reg_no2" name="Reg_no2" placeholder="Registration Number">
+        <button type="submit" class="btn btn-primary mt-3">Submit Absence</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+<script>
+  const form = document.getElementById('absenceForm');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const Reg_no = document.getElementById('Reg_no').value;
+    try {
+      const response = await fetch(`/fetch-student/${Reg_no}`, {
+        mode: 'no-cors',
+      });
+      console.log(response)
+      if (!response.ok) {
+        if (response.status === 404) {
+          alert('Student not found.');
+        } else {
+          alert('An error occurred while fetching student data.');
+        }
+        return;
+      }
+
+      const student = await response.json();
+
+      document.getElementById('studentName').textContent = student.Student_name;
+      document.getElementById('department').textContent = student.Department;
+      document.getElementById('section').textContent = student.Section;
+      document.getElementById('mobNo').textContent = student.Mob_no;
+      document.getElementById('mailId').textContent = student.Mail_Id;
+      document.getElementById('residence').textContent = student.Residence;
+      document.getElementById('Reg_no2').value = student.Reg_no;
+      document.getElementById('studentData').style.display = 'block';
+      const box = document.querySelector('#barcodeCont');
+      box.style.display = 'none';
+      adjustFooter()
+
+    } catch (err) {
+      console.error('Fetch error:', err);
+      alert('An unexpected error occurred.');
+    }
+  };
+
+  QuaggaInit = function() {
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector('#barcodeCont'),
+        constraints: {
+          width: 1920,
+          height: 1080,
+          facingMode: "environment",
+        },
+        area: {
+          top: "10%",
+          right: "10%",
+          left: "10%",
+          bottom: "10%"
+        },
+        singleChannel: false
+      },
+      decoder: {
+        readers: ["code_128_reader"]
+      }
+    }, function(err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      Quagga.start();
+
+    });
+
+
+  }
+
+  QuaggaInit()
+
+  Quagga.onDetected(function(result) {
+    const code = result.codeResult.code;
+    const box = document.querySelector('#barcodeCont');
+    box.style.display = 'none';
+    document.getElementById('Reg_no').value = code;
+    Quagga.stop();
+    form.onsubmit(new Event('submit'));
+    document.getElementById('reason').focus();
+    adjustFooter()
+  });
+
+  window.addEventListener('beforeunload', function() {
+    Quagga.stop();
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const video = document.querySelector('#barcodeCont video');
+    if (video) {
+      video.style.width = '100%';
+      video.style.height = 'auto';
+    }
+  })
+
+  const intervalId = setInterval(() => {
+    console.log("Running");
+    let count = document.getElementsByClassName("drawingBuffer").length;
+    if (count > 0) {
+      document.getElementsByClassName("drawingBuffer")[0].style.display = "none";
+      clearInterval(intervalId);
+    }
+  }, 10);
+
+
+  function resetUI() {
+    document.getElementById('Reg_no').value = '';
+    document.getElementById('studentData').style.display = 'none';
+    document.getElementById('barcodeCont').style.display = 'block';
+  }
+
+  document.getElementById('restartScan').addEventListener('click', restartScanner);
+
+  function restartScanner() {
+    Quagga.stop();
+    resetUI();
+    QuaggaInit()
+  }
+</script>

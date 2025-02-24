@@ -1,0 +1,56 @@
+<h1 class="m-2">Student Records</h1>
+<div class="container mt-3">
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Registration Number</th>
+                <th scope="col">Name</th>
+                <th scope="col">Department</th>
+                <th scope="col">Section</th>
+                <th scope="col">Year of Study</th>
+                <th scope="col" title="yyyy-mm-dd" data-toggle="tooltip" data-placement="top">DOB</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Email</th>
+                <th scope="col">Residence</th>
+                <th scope="col">Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach(student=> { %>
+                <tr>
+                    <td>
+                        <%= student.Reg_no %>
+                    </td>
+                    <td>
+                        <%= student.Student_name %>
+                    </td>
+                    <td>
+                        <%= student.Department %>
+                    </td>
+                    <td>
+                        <%= student.Section %>
+                    </td>
+                    <td>
+                        <%= student.YearOfStudy %>
+                    </td>
+                    <td>
+                        <%= new Date(student.DOB).toLocaleDateString('en-CA') %>
+                    </td>
+                    <td>
+                        <%= student.Mob_no %>
+                    </td>
+                    <td>
+                        <%= student.Mail_Id %>
+                    </td>
+                    <td>
+                        <%= student.Residence %>
+                    </td>
+                    <td>
+                        <%= student.Gender %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
+</div>

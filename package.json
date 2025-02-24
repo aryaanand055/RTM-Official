@@ -1,0 +1,27 @@
+{
+  "name": "real-time-management",
+  "version": "1.0.0",
+  "description": "This project is a web-based attendance management system designed to track students who arrive late. Teachers can scan student ID cards, retrieve the roll number, and display the student's details. A reason for lateness is then entered and saved along with the timestamp in the database for future reference.",
+  "main": "lateattendance.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "proxy": "http://localhost:8090"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "chart.js": "^4.4.6",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-ejs-layouts": "^2.5.1",
+    "express-openid-connect": "^0.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.3"
+  }
+}

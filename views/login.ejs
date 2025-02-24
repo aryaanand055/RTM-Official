@@ -1,0 +1,65 @@
+<div class="container main">
+ 
+  <div class="container py-5">
+    <form id="loginForm" class="p-4 mx-auto border rounded shadow-lg" style="max-width: 500px; background: #ffffff;">
+      <h2 class="text-center text-primary fw-bold mb-4">Login</h2>
+      <div class="mb-4">
+        <label for="Reg_No" class="form-label fw-bold">Registration Number:</label>
+        <input type="text" placeholder="715524104021" required class="form-control p-2" name="Reg_No" id="Reg_No">
+      </div>
+      <div class="mb-4">
+        <label for="password" class="form-label fw-bold">Password:</label>
+        <input type="password" placeholder="Enter the Password" required class="form-control p-2" name="password" id="password">
+      </div>
+      <div class="mb-3">
+        <button type="submit" class="btn btn-outline-primary w-100">Login</button>
+      </div>
+      <div class="text-center text-secondary small">Login will expire in 1 hour</div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const regNo = document.getElementById('Reg_No').value;
+    const password = document.getElementById('password').value;
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectUrl = urlParams.get('redirect');
+    
+    const response = await fetch('/lateattendance/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        Reg_No: regNo,
+        password: password
+      })
+    });
+    console.log(regNo);
+    console.log(password);
+    const data = await response.json();
+    
+
+    console.log(data);
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
+
+    if (data.success === true) {
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      }
+      const accessRole = data.access_role;
+      if (accessRole === 1) {
+        window.location.href = '/lateattendance/lateAbsenceForm';
+      } else if (accessRole === 2 || accessRole === 3) {
+        window.location.href = '/lateattendance/dashboard';
+      }
+    } else {
+      alert(data.message);
+    }
+  });
+</script>

@@ -1,0 +1,52 @@
+<% function getOrdinal(num) { const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]} %>
+<div class="container mt-5">
+  <h1 class="text-center">Late Attendance Details</h1>
+
+  <% if (typeof student === 'undefined' || !student) { %>
+  <div class="alert alert-danger mt-4" role="alert">
+    <strong>Error:</strong> Student not found.
+  </div>
+  <% } else { %>
+  <!-- Student Details Card -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <h4>Student Lookup</h4>
+      <p><strong>Registration Number:</strong> <%= student.Reg_no %></p>
+      <p><strong>Name:</strong> <%= student.Student_name %></p>
+      <p><strong>Department:</strong> <%= student.Department %></p>
+      <p><strong>Year of Study:</strong> <%= getOrdinal(student.YearOfStudy) %> year</p>
+      <p><strong>Section:</strong> <%= student.Section %></p>
+    </div>
+  </div>
+
+  <!-- Late Attendance Records -->
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <h4>Past Records of <%= student.Student_name %></h4>
+      <% if (attendanceRecords && attendanceRecords.length > 0) { %>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Recorded Time</th>
+            <th>Reason for Lateness</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% attendanceRecords.forEach(record => { %>
+          <tr>
+            <td><%= new Date(record.Late_Date).toDateString() %></td>
+            <td><%= new Date(record.Late_Date).toLocaleTimeString() %></td>
+            <td><%= record.Reason %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } else { %>
+      <p>No late attendance records available for this student.</p>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</div>

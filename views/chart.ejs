@@ -1,0 +1,123 @@
+<div class="container" id="chartsContainer">
+  <div>
+    <canvas id="myChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  function generateLast30Days() {
+    const dates = [];
+    const now = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(now.getDate() - i);
+      date.setUTCHours(0, 0, 0, 0);
+      const formattedDate = date.toISOString().split('T')[0];
+      dates.push(formattedDate.slice(8, 10) + '-' + formattedDate.slice(5, 7));
+    }
+    return dates;
+  }
+
+  async function fetchDailyAttendance() {
+    const response = await fetch('/api/hod-dashboard/daily');
+    data = await response.json();
+    return data
+  }
+
+  function normalizeDate(dateString) {
+    const date = new Date(dateString);
+    date.setUTCMinutes(date.getUTCMinutes() - date.getTimezoneOffset());
+    date.setUTCHours(0, 0, 0, 0);
+    const formattedDate = date.toISOString().split('T')[0];
+    return formattedDate.slice(8, 10) + '-' + formattedDate.slice(5, 7); //Returns a DD-MM format
+  }
+
+  function processAttendanceData(data) {
+    const groupedData = {};
+    const last30Days = generateLast30Days();
+    data.forEach(record => {
+      const key = `${record.YearOfStudy} - ${record.Section}`;
+      const normalizedRecordDate = normalizeDate(record.lateDate);
+
+      if (!groupedData[key]) {
+        groupedData[key] = {
+          counts: Array(last30Days.length).fill(0)
+        };
+      }
+      const dateIndex = last30Days.indexOf(normalizedRecordDate);
+      if (dateIndex !== -1) {
+        groupedData[key].counts[dateIndex] = record.lateCount;
+      }
+    });
+
+    return {
+      groupedData,
+      last30Days
+    };
+  }
+
+  async function createDailyCharts() {
+    const dataFromAPI = await fetchDailyAttendance();
+    const {
+      groupedData,
+      last30Days
+    } = processAttendanceData(dataFromAPI);
+
+    const chartContainer = document.getElementById('chartsContainer');
+    chartContainer.innerHTML = '';
+
+    const canvas = document.createElement('canvas');
+    chartContainer.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const datasets = Object.keys(groupedData).map((key, index) => ({
+      label: key,
+      data: groupedData[key].counts,
+      borderColor: `hsl(${(index * 50) % 360}, 70%, 50%)`,
+      backgroundColor: `hsla(${(index * 50) % 360}, 70%, 50%, 0.2)`,
+      fill: false,
+      tension: 0.1
+    }));
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: last30Days,
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Count'
+            },
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+              callback: function(value) {
+                return Number.isInteger(value) ? value : null;
+              }
+            },
+          },
+        }
+      }
+    });
+  }
+
+  createDailyCharts();
+</script>
