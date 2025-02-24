@@ -248,13 +248,9 @@
   }
   
   .side {
-    font-size: 20px;
+    font-size: 10px;
   }
-  @media (max-width: 768px) {
-    .side {
-        font-size: 10px;
-    }
-}
+  
   
   .col1 {
     margin-left: 38px;
