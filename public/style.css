@@ -2,60 +2,54 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-}
-
-
-.main {
+  }
+  
+  .main {
     height: 600px;
     padding: 0;
     position: relative;
-}
-
-.large {
+  }
+  
+  .large {
     width: 110vw;
     height: 100%;
     position: absolute;
     right: -80px;
-
-}
-
-.logo {
+  }
+  
+  .logo {
     width: 100%;
     z-index: -1;
     opacity: 0.8;
-}
-#barcodeCont{
-    width: 10px ;
-}
-
-
-.logo2 {
+  }
+  
+  .logo2 {
     padding-top: 20px;
     height: 25vh;
     width: 53vw;
-}
-
-.right-side {
+  }
+  
+  .right-side {
     height: 100vh;
-}
-
-.input {
+  }
+  
+  .input {
     width: 75%;
-}
-
-.input-box {
+  }
+  
+  .input-box {
     border-radius: 4px;
-}
-
-.login-full {
+  }
+  
+  .login-full {
     right: 500px;
     border: solid 2px gray;
     border-radius: 4px;
     display: flex;
     justify-content: center;
-}
-
-.submit {
+  }
+  
+  .submit {
     height: 40px;
     width: 100px;
     border-radius: 4px;
@@ -65,36 +59,44 @@
     transition: transform 0.2s ease;
     cursor: pointer;
     margin-left: 30px;
-}
-
-.logo {
+  }
+  
+  .text-box {
+    display: none;
+    margin-top: 10px;
+  }
+  
+  .logo {
     height: 43vh;
     width: 50vw;
-}
-
-
-.logo2 {
+  }
+  
+  .mailcol {
+    margin-left: 80px;
+  }
+  
+  .mailcol-2 {
+    margin-left: 70px;
+  }
+  
+  .logo2 {
     padding-top: 20px;
     height: 25vh;
     width: 55vw;
     margin-left: 50px;
-}
-
-#studentData {
+  }
+  
+  #studentData {}
+  
+  #Reg_no2 {
     display: none;
-}
-
-#Reg_no2 {
+  }
+  
+  #cont1 canvas {
     display: none;
-}
-
-
-#cont1 canvas {
-    display: none;
-}
-
-
-#cont1 {
+  }
+  
+  #cont1 {
     border: 1px solid #000;
     width: 75%;
     max-width: 100%;
@@ -102,50 +104,49 @@
     margin-top: 1rem;
     height: auto;
     padding: 0;
-}
-
-#Reg_no2 {
+  }
+  
+  #Reg_no2 {
     display: none;
-}
-
-.details {
+  }
+  
+  .details {
     display: none;
-}
-
-.clickable-row {
+  }
+  
+  .clickable-row {
     cursor: pointer;
-}
-
-.table_link {
+  }
+  
+  .table_link {
     cursor: pointer;
-}
-
-
-/* To convert the checkbox to a switch */
-.switch {
+  }
+  
+  /* To convert the checkbox to a switch */
+  .switch {
     display: flex;
     align-items: center;
     gap: 10px;
     position: relative;
-}
-
-.switch input {
+  }
+  
+  .switch input {
     opacity: 0;
     width: 0;
     height: 0;
-}
-
-.slider {
+  }
+  
+  .slider {
     position: relative;
     cursor: pointer;
     width: 50px;
     height: 24px;
     background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.slider:before {
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+  
+  .slider:before {
     position: absolute;
     content: "";
     height: 16px;
@@ -153,39 +154,39 @@
     left: 4px;
     bottom: 4px;
     background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-input:checked+.slider {
-    background-color: #2196F3;
-}
-
-input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked+.slider:before {
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+  
+  input:checked+.slider {
+    background-color: #2196f3;
+  }
+  
+  input:focus+.slider {
+    box-shadow: 0 0 1px #2196f3;
+  }
+  
+  input:checked+.slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
-}
-
-.slider.round {
+  }
+  
+  .slider.round {
     border-radius: 34px;
-}
-
-.slider.round:before {
+  }
+  
+  .slider.round:before {
     border-radius: 50%;
-}
-
-/* For the message bar */
-#alertBox {
+  }
+  
+  /* For the message bar */
+  #alertBox {
     position: absolute;
     overflow: hidden;
-}
-
-.progress-bar {
+  }
+  
+  .progress-bar {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -193,33 +194,83 @@ input:checked+.slider:before {
     height: 4px;
     background-color: #17a2b8;
     animation: shrink 4.5s linear forwards;
-}
-
-@keyframes shrink {
+  }
+  
+  @keyframes shrink {
     from {
-        width: 100%;
+      width: 100%;
     }
-
+  
     to {
-        width: 0;
+      width: 0;
     }
-}
-
-.footer {
+  }
+  
+  .footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-}
-
-.navbar-brand {
+  }
+  
+  .navbar-brand {
     font-size: 18px;
-}
-
-
-#loginPage {
+  }
+  
+  #loginPage {
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-}
+  }
+  
+  #dropdown {
+    border: 1px solid;
+    width: 100px;
+    border-radius: 4px;
+    position: relative;
+    overflow-y: auto;
+    max-height: 100px;
+  }
+  .inputbox{
+    margin-left: 40px;
+  }
+  
+  .submitbtn {
+    margin-top: 10px;
+    margin-left: 140px;
+  }
+  
+  @media (max-width: 767px) {
+    .submitbtn {
+      margin-left: 40px;
+    }
+  }
+  
+  .side {
+    font-size: 10px;
+  }
+  
+  .col1 {
+    margin-left: 38px;
+  }
+  
+  .option {
+    font-size: 4px;
+  }
+  
+  .col3 {
+    margin-left: 33px;
+  }
+  
+  .col4 {
+    margin-left: 73px;
+  }
+  
+  .col5 {
+    margin-left: 60px;
+  }
+  
+  .col2 {
+    margin-left: 52px;
+  }
