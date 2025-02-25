@@ -11,8 +11,8 @@
   <div class="card mt-4">
     <div class="card-body">
       <h4>Student Lookup</h4>
-      <p><strong>Registration Number:</strong> <%= student.Reg_no %></p>
-      <p><strong>Name:</strong> <%= student.Student_name %></p>
+      <p><strong>Registration Number:</strong> <%= student.Reg_No %></p>
+      <p><strong>Name:</strong> <%= student.Student_Name %></p>
       <p><strong>Department:</strong> <%= student.Department %></p>
       <p><strong>Year of Study:</strong> <%= getOrdinal(student.YearOfStudy) %> year</p>
       <p><strong>Section:</strong> <%= student.Section %></p>
@@ -23,7 +23,7 @@
 
   <div class="card mt-4">
     <div class="card-body">
-      <h4>Past Records of <%= student.Student_name %></h4>
+      <h4>Past Records of <%= student.Student_Name %></h4>
       <% if (attendanceRecords && attendanceRecords.length > 0) { %>
       <table class="table table-striped">
         <thead>

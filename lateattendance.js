@@ -658,7 +658,6 @@ app.get('/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
                     console.error('Error fetching attendance records:', err);
                     return res.send('Error fetching attendance records');
                 } else {
-                    console.log(student)
                     // Check if there are any past absent records
                     if (result2.length > 0) {
                         res.render('studentDetails', { title: "Student Detail", student: result[0], attendanceRecords: result2 });
@@ -674,10 +673,9 @@ app.get('/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
     });
 });
 
-app.get('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
+app.post('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
     const regNo = req.params.Reg_no;
     const query = 'SELECT * FROM student_data WHERE Reg_no = ?';
-
     db.query(query, [regNo], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err });
@@ -685,13 +683,16 @@ app.get('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
         if (results.length === 0) {
             return res.status(404).json({ message: 'Student not found.' });
         }
-        res.json(results[0]);
+        return res.json(results[0]);
     });
 });
+
 
 app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
     const rollNumber = req.body.Reg_no2;
     const reason = req.body.reason;
+
+    console.log(rollNumber, reason)
 
     const query = 'INSERT INTO student_absent_data (Reg_no, reason, Staff_Reg_No) VALUES (?, ?, ?)';
 
@@ -719,7 +720,12 @@ app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
                 }
                 // msg = `Student ${name} from ${dept} ${sect} has been late for ${totalAbsences} days `
 
-                res.render('absenceFormSubmitted', { msg: msg, title: "Late attendance submitted" });
+                // res.render('absenceFormSubmitted', { msg: msg, title: "Late attendance submitted" });
+                return res.status(200).json({
+                    success: true,
+                    message: "Absence Successfully Submitted",
+                    late_attendance_count: totalAbsences
+                });
             })
         });
     });

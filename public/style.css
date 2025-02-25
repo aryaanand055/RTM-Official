@@ -86,12 +86,6 @@
     margin-left: 50px;
   }
   
-  #studentData {}
-  
-  #Reg_no2 {
-    display: none;
-  }
-  
   #cont1 canvas {
     display: none;
   }
@@ -248,7 +242,7 @@
   }
   
   .side {
-    font-size: 20px;
+    font-size: 25px;
   }
   @media (max-width: 768px) {
     .side {
