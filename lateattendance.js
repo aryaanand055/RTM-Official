@@ -561,7 +561,6 @@ app.get("/records/dept", authenticateJWT([3]), (req, res) => {
 });
 
 app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
-
     const userRegNo = req.user.Reg_No;
 
     const query0 = "SELECT * FROM staff_data WHERE Reg_No = ?";
@@ -598,30 +597,14 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
                 console.error('Error fetching records:', err);
                 return res.send('Error fetching records');
             }
-            // const groupedStudents = results.reduce((acc, student) => {
-            //     if (!acc[student.Reg_no]) {
-            //         acc[student.Reg_no] = {
-            //             studentInfo: {
-            //                 Reg_no: student.Reg_no,
-            //                 Student_name: student.Student_name,
-            //                 Mob_no: student.Mob_no,
-            //                 Mail_Id: student.Mail_Id
-            //             },
-            //             countLate: 0,
-            //             records: []
-            //         };
-            //     }
-            //     acc[student.Reg_no].countLate++;
-            //     acc[student.Reg_no].records.push({
-            //         Late_Date: new Date(student.Late_Date).toLocaleDateString("en-GB"),
-            //         Late_Time: new Date(student.Late_Date).toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' }),
-            //         Reason: student.Reason
-            //     });
-            //     return acc;
-            // }, {});
-            // const resultArray = Object.values(groupedStudents);
             const title = `${Dept} - ${Class} ${Sec}`;
-            // console.log(results)
+            console.log(results)
+            // const q2 = `
+            // SELECT a.Student_Name, a.Reg_No, count() FROM student_absent_data a JOIN student_data b
+            // ON a.Reg_No = b.Reg_No
+            // WHERE Department = ? AND YearOfStudy = ? AND Section = ?
+
+            // `
             res.render('allrecords', { records: results, title: title, dept: Dept, Class: Class, Sec: Sec, specificClass: true });
             // res.render('recordsPerClass', { students: resultArray, urlPar: [Dept, Class, Sec], title });
         });

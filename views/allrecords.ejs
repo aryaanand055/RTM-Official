@@ -4,6 +4,11 @@
     <h4 class="m-auto w-100 text-muted">No records found</h44>
   <% } else { %>
   <div class="form-group row">
+    <label class="switch my-3 mx-2">
+      <div class="font-weight-bold">Group by Student - </div>
+      <input type="checkbox" id="joinByStudentSwitch">
+      <span for="joinByStudentSwitch" class="slider round"></span>
+    </label>
     <% if (typeof specificClass === 'undefined') { %>
     <div class="col-md-3">
       <label for="yearDropdown">Year of Study</label>
@@ -45,6 +50,7 @@
     </div>
     <% } %>
 
+    
     <div class="col-md-3">
       <label for="dateFilter">From Date</label>
       <input type="date" id="dateFilter" class="form-control">
@@ -56,12 +62,13 @@
   </div>
   <% if (typeof specificClass === 'undefined') { %>
 
-  <label class="switch">
-    <div class="font-weight-bold">Condensed view - </div>
+  <label class="switch my-3 mx-2">
+    <div class="font-weight-bold">Group by Class - </div>
     <input type="checkbox" id="joinByClassSwitch">
     <span for="joinByClassSwitch" class="slider round"></span>
   </label>
   <% } %>
+  <div id="table12">
 
   <table class="table table-striped mt-4" id="detailedTable">
     <thead class="thead-dark">
@@ -104,11 +111,51 @@
     </tbody>
   </table>
   <% } %>
-  <% } %> 
 </div>
+
+  <% } %> 
+  <table class="table table-striped mt-4 d-none" id="summaryByStudentsTable">
+    <thead class="thead-dark">
+      <tr>
+        <th>Reg. No.</th>
+        <th>Student Name</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody id="summaryByStudentsTableBody">
+    </tbody>
+  </table>
+</div>
+
+
+
 <script>
   const allRecords = <%- JSON.stringify(records) %>;
-  console.log(allRecords)
+  let simplifiedRec = []
+
+for (const [key, value] of Object.entries(allRecords)) {
+  let s = {}; 
+  
+  for (const [key1, value1] of Object.entries(value)) {
+    if (key1 == "Reg_No" || key1 == "Student_Name") {
+      s[key1] = value1; 
+    }
+  }
+  
+  let existingRecord = simplifiedRec.find(item => item.Reg_No === s.Reg_No && item.Student_Name === s.Student_Name);
+  
+  if (existingRecord) {
+    existingRecord.count += 1;
+  } else {
+    s.count = 1;
+    simplifiedRec.push(s);
+  }
+}
+simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
+// console.log("Simplified rec: ", simplifiedRec);
+
+  
+  console.log("All records: ", allRecords)
   document.addEventListener('DOMContentLoaded', function() {
     <% if (typeof specificClass === 'undefined') { %>
     const yearDropdown = document.getElementById('yearDropdown'),
@@ -220,7 +267,7 @@
       }, {});
 
       for (const key in summary) {
-        const row = `<tr>
+        const row = `<tr class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info"  onclick="window.location.href = 'records/CSE/${summary[key].YearOfStudy}/${summary[key].Section}'"">
                       <td>${summary[key].YearOfStudy}</td>
                       <td>${summary[key].Section}</td>
                       <td>${summary[key].Count}</td>
@@ -242,9 +289,86 @@
       sectionDropdown.disabled = yearDropdown.value === "";
       filterRecords();
     });
-    sectionDropdown.addEventListener('change', filterRecords);
+    sectionDropdown.addEventListener('change', ()=>{
+      filterRecords();
+    });
     joinByClassSwitch.addEventListener('change', filterRecords);
     <% } %>
+
+   function displayGroupedStudents() {
+      let t3Body = document.getElementById("summaryByStudentsTableBody");
+  t3Body.innerHTML = "";
+  <% if (typeof specificClass === 'undefined') { %>
+  let year = yearDropdown.value;
+      let section = sectionDropdown.value;
+      <% } %>
+
+  let dateFilter = document.getElementById('dateFilter').value;
+  let dateFilter1 = document.getElementById('dateFilter1').value;
+
+  let fromDate = dateFilter ? new Date(dateFilter) : null;
+  let toDate = dateFilter1 ? new Date(dateFilter1) : null;
+  if (toDate) {
+  toDate.setHours(23, 59, 59, 999); // Set time to end of day bcos default is 5:30 am
+}
+
+  let filteredRec = simplifiedRec.filter(student => {
+    const studentRecords = allRecords.filter(record => 
+      record.Reg_No === student.Reg_No && record.Student_Name === student.Student_Name
+  <% if (typeof specificClass === 'undefined') { %>
+
+      &&
+      (year === "" || record.YearOfStudy.toString() === year) &&
+      (section === "" || record.Section === section)
+
+      <% } %>
+
+    );
+
+    return studentRecords.some(record => {
+      const recordDate = new Date(record.Late_Date);
+      return (!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate);
+    });
+  });
+
+  filteredRec.forEach(student => {
+    const row = `<tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=${student.Reg_No}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+                  <td>${student.Reg_No}</td>
+                  <td>${student.Student_Name}</td>
+                  <td>${student.count}</td>
+                </tr>`;
+    t3Body.insertAdjacentHTML('beforeend', row);
+  });
+}
+
+joinByStudentSwitch.addEventListener('change', () => {
+  let t12 = document.getElementById("table12");
+  let t3 = document.getElementById("summaryByStudentsTable");
+
+  if (joinByStudentSwitch.checked) {
+    t12.classList.add("d-none");
+    t3.classList.remove("d-none");
+    displayGroupedStudents(); 
+  } else {
+    t12.classList.remove("d-none");
+    t3.classList.add("d-none");
+  }
+});
+<% if (typeof specificClass === 'undefined') { %>
+
+yearDropdown.addEventListener('change', () => {
+      sectionDropdown.disabled = yearDropdown.value === "";
+      displayGroupedStudents();
+    });
+    sectionDropdown.addEventListener('change', ()=>{
+      displayGroupedStudents();
+    });
+
+
+    <% } %>
+
+dateFilter.addEventListener('change', displayGroupedStudents);
+dateFilter1.addEventListener('change', displayGroupedStudents);
 
     dateFilter.addEventListener('change', filterRecords);
     dateFilter1.addEventListener('change', filterRecords);

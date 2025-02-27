@@ -26,26 +26,14 @@ function adjustFooter() {
     window.addEventListener(event, adjustFooter);
 });
 
-function showAlert(isGreen, message, callback) {
+function showAlert(color, message, callback) {
     const alertBox = document.getElementById('customAlert');
     const alertMessage = document.getElementById('alertMessage');
     const okBtn = document.getElementById("okButton");
 
     alertMessage.textContent = message;
-
-    if (isGreen) {
-        alertBox.classList.remove('alert-red');
-        okBtn.classList.remove('alert-red');
-        okBtn.classList.add('alert-green');
-
-        alertBox.classList.add('alert-green');
-    } else {
-        alertBox.classList.remove('alert-green');
-        okBtn.classList.remove('alert-green');
-
-        okBtn.classList.add('alert-red');
-        alertBox.classList.add('alert-red');
-    }
+    okBtn.classList.add(`alert-${color}`);
+    alertBox.classList.add(`alert-${color}`);
 
     okBtn.onclick = function() {
         closeAlert();
