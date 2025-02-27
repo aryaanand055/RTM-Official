@@ -3,7 +3,7 @@
   <% if (typeof tutor === 'undefined') { %>
   <h2 class="h2">Dashboard</h2>
   <% } else{ %>
-  <h2 class="h2">Tutor Dashboard - <%= YOS %> <%= section %></h2>
+  <h2 class="h2">Tutor Dashboard - <%= getOrdinal(YOS) %> Year [ <%= section %> ]</h2>
   <% }  %>
 
 
@@ -195,9 +195,11 @@
 
 <!-- Script for displaying records - Condensed and Detailed -->
 <script>
-  const dataFromAPI = <%- JSON.stringify(attendanceResults) %>;
   const allRecords =  <%- JSON.stringify(records) %>;
+  const dataFromAPI = <%- JSON.stringify(attendanceResults) %>;
+
   <% if (typeof tutor === 'undefined') { %>
+
   document.addEventListener('DOMContentLoaded', function() {
     const yearDropdown = document.getElementById('yearDropdown');
     const sectionDropdown = document.getElementById('sectionDropdown');
@@ -365,6 +367,7 @@
       groupedData,
       lastXDays
     } = processAttendanceData(dataFromAPI, yod1);
+    console.log(dataFromAPI, allRecords)
     const chartContainer = document.getElementById('chartsContainer');
     chartContainer.innerHTML = '';
 

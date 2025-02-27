@@ -1,6 +1,8 @@
 <div class="container mt-5">
   <h2>Attendance Records for <%= title  %></h2>
-
+  <% if (records.length === 0) { %>
+    <h4 class="m-auto w-100 text-muted">No records found</h44>
+  <% } else { %>
   <div class="form-group row">
     <% if (typeof specificClass === 'undefined') { %>
     <div class="col-md-3">
@@ -73,17 +75,20 @@
       </tr>
     </thead>
     <tbody id="attendanceTable">
-      <% records.forEach(record => { %>
-      <tr>
-        <td><%= record.Reg_no %></td>
-        <td><%= record.Student_name %></td>
-        <td><%= record.YearOfStudy %></td>
-        <td><%= record.Section %></td>
-        <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-        <td><%= record.Reason %></td>
-      </tr>
-      <% }); %>
-    </tbody>
+      
+        <% records.forEach(record => { %>
+        <tr>
+          <td><%= record.Reg_no %></td>
+          <td><%= record.Student_Name %></td>
+          <td><%= record.YearOfStudy %></td>
+          <td><%= record.Section %></td>
+          <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+          <td><%= record.Reason %></td>
+        </tr>
+        <% }); %>
+      
+    
+  </tbody>
   </table>
   <% if (typeof specificClass === 'undefined') { %>
 
@@ -99,10 +104,11 @@
     </tbody>
   </table>
   <% } %>
-
+  <% } %> 
 </div>
 <script>
   const allRecords = <%- JSON.stringify(records) %>;
+  console.log(allRecords)
   document.addEventListener('DOMContentLoaded', function() {
     <% if (typeof specificClass === 'undefined') { %>
     const yearDropdown = document.getElementById('yearDropdown'),
@@ -141,7 +147,7 @@
       records.forEach(record => {
         const row = `<tr>
                       <td>${record.Reg_No}</td>
-                      <td>${record.Student_name}</td>
+                      <td>${record.Student_Name}</td>
                       <td>${record.YearOfStudy}</td>
                       <td>${record.Section}</td>
                       <td>${new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>

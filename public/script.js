@@ -25,3 +25,39 @@ function adjustFooter() {
 ['load', 'resize', 'change'].forEach(event => {
     window.addEventListener(event, adjustFooter);
 });
+
+function showAlert(isGreen, message, callback) {
+    const alertBox = document.getElementById('customAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const okBtn = document.getElementById("okButton");
+
+    alertMessage.textContent = message;
+
+    if (isGreen) {
+        alertBox.classList.remove('alert-red');
+        okBtn.classList.remove('alert-red');
+        okBtn.classList.add('alert-green');
+
+        alertBox.classList.add('alert-green');
+    } else {
+        alertBox.classList.remove('alert-green');
+        okBtn.classList.remove('alert-green');
+
+        okBtn.classList.add('alert-red');
+        alertBox.classList.add('alert-red');
+    }
+
+    okBtn.onclick = function() {
+        closeAlert();
+        if (callback) {
+            callback();
+        }
+    };
+
+    alertBox.style.display = 'block';
+}
+
+function closeAlert() {
+    const alertBox = document.getElementById('customAlert');
+    alertBox.style.display = 'none';
+}

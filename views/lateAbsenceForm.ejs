@@ -107,10 +107,20 @@
     }
 
     if (data.success !== true) {
-      alert(data.message);
+
+      showAlert(false, data.message)
+      // alert(data.message);
     } else {
-      alert(`${data.message}\nLate attendance count for previous 30 days: ${data.late_attendance_count}`)
-      location.reload()
+      if (data.late_attendance_count > 3){
+        showAlert(false, `This student has been late for more than 3 times.\n Please inform the tutor. \n`, ()=>{
+        location.reload()
+      })
+      } else {
+        showAlert(true, `${data.message}\nLate Count -  ${data.late_attendance_count}`, ()=>{
+        location.reload()
+      })
+      }
+      
     }
 
 
@@ -134,6 +144,9 @@
     });
     const data = await response.json();
     console.log("Data: ", data);
+    if (data.message === "Student not found."){
+      alert(data.message)
+    }
     if (!response.ok) {
       throw new Error('Form Submit Failed');
     }
