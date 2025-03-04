@@ -15,6 +15,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 const cors = require("cors")
 app.use(cors({ origin: "https://sdc2.psgitech.ac.in/lateattendance" }))
+
 // Body Parser to get the content of the forms
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -130,8 +131,6 @@ app.set('layout', 'master');
 // For static css and js
 app.use(express.static('public'));
 
-
-
 app.get("/", (req, res) => {
     if (req.isLoggedIn) {
         return res.redirect("/lateattendance/dashboard")
@@ -144,19 +143,17 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
     const mesg = req.query.msg;
     const userRegNo = req.user.Reg_No;
     const access_role = req.user.accessRole
-    // if (access_role === 3) {
-        //Hod Dashboard
-        const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
-        db.query(query, [userRegNo], (err, result) => {
-            if (err) {
-                console.error('Error fetching records:', err);
-                res.send('Error fetching records');
-            } else if (result.length === 0) {
-                res.send('No data found');
-            } else {
-                const dept = result[0].Department;
+    const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
+    db.query(query, [userRegNo], (err, result) => {
+        if (err) {
+            console.error('Error fetching records:', err);
+            res.send('Error fetching records');
+        } else if (result.length === 0) {
+            res.send('No data found');
+        } else {
+            const dept = result[0].Department;
 
-                const attendanceQuery = `
+            const attendanceQuery = `
                 SELECT 
                     COUNT(CASE WHEN DATE(Late_Date) = CURDATE() THEN 1 END) AS today,
                     COUNT(CASE WHEN Late_Date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) AS last7Days,
@@ -164,15 +161,15 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                 FROM student_absent_data a, student_data b
                 WHERE a.Reg_No = b.Reg_No and b.Department = ?`;
 
-                db.query(attendanceQuery, [dept], (err, attendanceResults) => {
-                    if (err) {
-                        console.error('Error fetching attendance data:', err);
-                        res.send('Error fetching attendance data');
-                    } else {
-                        prevData = [{ "Total Late Attendances (Today)": attendanceResults[0].today }, { "Total Late Attendances (Last 7 days)": attendanceResults[0].last7Days }, {
-                            "Total Late Attendances (Last 30 days)": attendanceResults[0].last30Days
-                        }]
-                        const recentActivityQuery = `
+            db.query(attendanceQuery, [dept], (err, attendanceResults) => {
+                if (err) {
+                    console.error('Error fetching attendance data:', err);
+                    res.send('Error fetching attendance data');
+                } else {
+                    prevData = [{ "Total Late Attendances (Today)": attendanceResults[0].today }, { "Total Late Attendances (Last 7 days)": attendanceResults[0].last7Days }, {
+                        "Total Late Attendances (Last 30 days)": attendanceResults[0].last30Days
+                    }]
+                    const recentActivityQuery = `
                         SELECT a.Reg_No, Late_Date, Student_Name, Section, YearOfStudy 
                         FROM student_absent_data a, student_data b
                         WHERE a.Reg_No = b.Reg_No and Department = ?
@@ -180,180 +177,102 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                         limit 10
                         `;
 
-                        db.query(recentActivityQuery, [dept], (err, recentActivities) => {
-                            if (err) {
-                                console.error('Error fetching recent activity:', err);
-                                res.send('Error fetching recent activity');
-                            } else {
-                                const dept = req.user.Dept
-                                const query = `
+                    db.query(recentActivityQuery, [dept], (err, recentActivities) => {
+                        if (err) {
+                            console.error('Error fetching recent activity:', err);
+                            res.send('Error fetching recent activity');
+                        } else {
+                            const dept = req.user.Dept
+                            const query = `
                                         SELECT a.Reg_No, Late_Date, Student_Name, Section, YearOfStudy, Reason
                                         FROM student_absent_data a, student_data b
                                         WHERE a.Reg_No = b.Reg_No
                                         and b.Department = ?
                                         ORDER BY Late_Date DESC;
                                     `;
-                                db.query(query, [dept], (err, records) => {
-                                    if (err) {
-                                        console.error('Error fetching attendance records:', err);
-                                        return res.status(500).send('Server error');
-                                    } else {
-                                        const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
-                                        db.query(query, [userRegNo], (err, result) => {
-                                            if (err) return res.status(500).json({ error: 'Error fetching staff data' });
-                                            if (result.length === 0) return res.status(404).json({ error: 'No data found' });
+                            db.query(query, [dept], (err, records) => {
+                                if (err) {
+                                    console.error('Error fetching attendance records:', err);
+                                    return res.status(500).send('Server error');
+                                } else {
+                                    const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
+                                    db.query(query, [userRegNo], (err, result) => {
+                                        if (err) return res.status(500).json({ error: 'Error fetching staff data' });
+                                        if (result.length === 0) return res.status(404).json({ error: 'No data found' });
 
-                                            const dept = result[0].Department;
-                                            const YOS = result[0].YearOfClass;
-                                            const Sec = result[0].Section;
-                                            // if YOS and Sec are null then it is HOD
-                                            if (!YOS && !Sec) {
-                                                const dailyAttendanceQuery = `
-            SELECT 
-                DATE(Late_Date) AS lateDate,
-                Section,
-                YearOfStudy,
-                COUNT(*) AS lateCount
-            FROM student_absent_data a
-            JOIN student_data b ON a.Reg_No = b.Reg_No
-            WHERE b.Department = ?
-            AND Late_Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            GROUP BY lateDate, Section, YearOfStudy
-            ORDER BY YearOfStudy ASC, Section ASC, lateDate ASC;
-        `;
-                                                db.query(dailyAttendanceQuery, [dept], (err, results) => {
-                                                    if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
-                                                    res.render('dashboard', {
-                                                        title: "Dashboard",
-                                                        msg: mesg,
-                                                        deptName: dept,
-                                                        dept: dept,
-                                                        prevData: prevData,
-                                                        recentActivities: recentActivities,
-                                                        records: records,
-                                                        attendanceResults: results
-                                                    });
+                                        const dept = result[0].Department;
+                                        const YOS = result[0].YearOfClass;
+                                        const Sec = result[0].Section;
+                                        // if YOS and Sec are null then it is HOD
+                                        if (!YOS && !Sec) {
+                                            const dailyAttendanceQuery = `
+                                                    SELECT 
+                                                        DATE(Late_Date) AS lateDate,
+                                                        Section,
+                                                        YearOfStudy,
+                                                        COUNT(*) AS lateCount
+                                                    FROM student_absent_data a
+                                                    JOIN student_data b ON a.Reg_No = b.Reg_No
+                                                    WHERE b.Department = ?
+                                                    AND Late_Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                                                    GROUP BY lateDate, Section, YearOfStudy
+                                                    ORDER BY YearOfStudy ASC, Section ASC, lateDate ASC;`;
+                                            db.query(dailyAttendanceQuery, [dept], (err, results) => {
+                                                if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
+                                                res.render('dashboard', {
+                                                    title: "Dashboard",
+                                                    msg: mesg,
+                                                    deptName: dept,
+                                                    dept: dept,
+                                                    prevData: prevData,
+                                                    recentActivities: recentActivities,
+                                                    records: records,
+                                                    attendanceResults: results
                                                 });
-                                            } else {
-                                                const dailyAttendanceQuery = `
-            SELECT 
-                DATE(Late_Date) AS lateDate,
-                Section,
-                YearOfStudy,
-                COUNT(*) AS lateCount
-            FROM student_absent_data a
-            JOIN student_data b ON a.Reg_No = b.Reg_No
-            WHERE b.Department = ? AND b.YearOfStudy = ? AND b.Section = ?
-            AND Late_Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-            GROUP BY lateDate, Section, YearOfStudy
-            ORDER BY YearOfStudy ASC, Section ASC, lateDate ASC;
-        `;
-                                                db.query(dailyAttendanceQuery, [dept, YOS, Sec], (err, results) => {
-                                                    if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
-                                                    res.render('dashboard', {
-                                                        title: "Dashboard",
-                                                        tutor: true,
-                                                        YOS : YOS,
-                                                        section: Sec,
-                                                        msg: mesg,
-                                                        deptName: dept,
-                                                        dept: dept,
-                                                        prevData: prevData,
-                                                        recentActivities: recentActivities,
-                                                        records: records,
-                                                        attendanceResults: results,
-                                                        title: "Tutor Dashboard"
-                                                    });
+                                            });
+                                        } else {
+                                            const dailyAttendanceQuery = `
+                                            SELECT 
+                                                DATE(Late_Date) AS lateDate,
+                                                Section,
+                                                YearOfStudy,
+                                                COUNT(*) AS lateCount
+                                            FROM student_absent_data a
+                                            JOIN student_data b ON a.Reg_No = b.Reg_No
+                                            WHERE b.Department = ? AND b.YearOfStudy = ? AND b.Section = ?
+                                            AND Late_Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                                            GROUP BY lateDate, Section, YearOfStudy
+                                            ORDER BY YearOfStudy ASC, Section ASC, lateDate ASC;
+                                        `;
+                                            db.query(dailyAttendanceQuery, [dept, YOS, Sec], (err, results) => {
+                                                if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
+                                                res.render('dashboard', {
+                                                    title: "Dashboard",
+                                                    tutor: true,
+                                                    YOS: YOS,
+                                                    section: Sec,
+                                                    msg: mesg,
+                                                    deptName: dept,
+                                                    dept: dept,
+                                                    prevData: prevData,
+                                                    recentActivities: recentActivities,
+                                                    records: records,
+                                                    attendanceResults: results,
+                                                    title: "Tutor Dashboard"
                                                 });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    // } else if (access_role === 2) {
-    //     //Tutor Dashboard
-    //     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
-    //     db.query(query, [userRegNo], (err, result) => {
-    //         if (err) {
-    //             console.error('Error fetching records:', err);
-    //             res.send('Error fetching records');
-    //         } else if (result.length === 0) {
-    //             res.send('No data found');
-    //         } else {
-    //             const dept = result[0].Department;
-    //             const YOS = result[0].YearOfClass;
-    //             const Sec = result[0].Section;
-    //             const attendanceQuery = `
-    //             SELECT 
-    //                 COUNT(CASE WHEN DATE(Late_Date) = CURDATE() THEN 1 END) AS today,
-    //                 COUNT(CASE WHEN Late_Date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 END) AS last7Days,
-    //                 COUNT(CASE WHEN Late_Date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 END) AS last30Days
-    //             FROM student_absent_data a, student_data b
-    //             WHERE a.Reg_No = b.Reg_No and b.Department = ? and b.YearOfStudy = ? and b.Section =?`;
-
-    //             db.query(attendanceQuery, [dept, YOS, Sec], (err, attendanceResults) => {
-    //                 if (err) {
-    //                     console.error('Error fetching attendance data:', err);
-    //                     res.send('Error fetching attendance data');
-    //                 } else {
-    //                     prevData = [{ "Total Late Attendances (Today)": attendanceResults[0].today }, { "Total Late Attendances (Last 7 days)": attendanceResults[0].last7Days }, {
-    //                         "Total Late Attendances (Last 30 days)": attendanceResults[0].last30Days
-    //                     }]
-    //                     const recentActivityQuery = `
-    //                     SELECT a.Reg_No, Late_Date, Student_name, Section, YearOfStudy 
-    //                     FROM student_absent_data a, student_data b
-    //                     WHERE a.Reg_No = b.Reg_No and Department = ? and b.YearOfStudy = ? and b.Section =?
-    //                     ORDER BY Late_Date DESC
-    //                     limit 10
-    //                     `;
-
-    //                     db.query(recentActivityQuery, [dept, YOS, Sec], (err, recentActivities) => {
-    //                         if (err) {
-    //                             console.error('Error fetching recent activity:', err);
-    //                             res.send('Error fetching recent activity');
-    //                         } else {
-    //                             const dept = req.user.Dept
-    //                             const query = `
-    //                                     SELECT a.Reg_No, Late_Date, Student_name, Section, YearOfStudy, Reason
-    //                                     FROM student_absent_data a, student_data b
-    //                                     WHERE a.Reg_No = b.Reg_No
-    //                                     and b.Department = ? and b.YearOfStudy = ? and b.Section = ?
-    //                                     ORDER BY Late_Date DESC;
-    //                                 `;
-    //                             db.query(query, [dept, YOS, Sec], (err, records) => {
-    //                                 if (err) {
-    //                                     console.error('Error fetching attendance records:', err);
-    //                                     return res.status(500).send('Server error');
-    //                                 } else {
-    //                                     res.render('dashboard', {
-    //                                         title: "Dashboard",
-    //                                         tutor: true,
-    //                                         YOS: YOS,
-    //                                         section: Sec,
-    //                                         msg: mesg,
-    //                                         deptName: dept,
-    //                                         dept: dept,
-    //                                         prevData: prevData,
-    //                                         recentActivities: recentActivities,
-    //                                         records: records,
-    //                                     });
-
-    //                                 }
-    //                             });
-
-    //                         }
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
 });
+
 app.get('/api/hod-dashboard/daily', authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
@@ -472,6 +391,7 @@ app.get('/logout', (req, res) => {
     res.clearCookie('logintoken', { httpOnly: true, secure: false, sameSite: 'Strict' });
     res.redirect('/lateattendance/login?msg=' + encodeURIComponent("You have been logged out successfully"));
 });
+
 app.get("/records", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?;";
@@ -598,18 +518,11 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
                 return res.send('Error fetching records');
             }
             const title = `${Dept} - ${Class} ${Sec}`;
-            console.log(results)
-            // const q2 = `
-            // SELECT a.Student_Name, a.Reg_No, count() FROM student_absent_data a JOIN student_data b
-            // ON a.Reg_No = b.Reg_No
-            // WHERE Department = ? AND YearOfStudy = ? AND Section = ?
-
-            // `
             res.render('allrecords', { records: results, title: title, dept: Dept, Class: Class, Sec: Sec, specificClass: true });
-            // res.render('recordsPerClass', { students: resultArray, urlPar: [Dept, Class, Sec], title });
         });
     });
 });
+
 app.get('/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
     const regNo = req.query.reg_no;
 
@@ -662,7 +575,6 @@ app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
     const rollNumber = req.body.Reg_no2;
     const reason = req.body.reason;
 
-
     const query = 'INSERT INTO student_absent_data (Reg_no, reason, Staff_Reg_No) VALUES (?, ?, ?)';
 
     db.query(query, [rollNumber, reason, req.user.Reg_No], (err) => {
@@ -687,9 +599,6 @@ app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
                 } else {
                     msg = `${name} from ${dept} ${sect} has been late for ${totalAbsences} days `
                 }
-                // msg = `Student ${name} from ${dept} ${sect} has been late for ${totalAbsences} days `
-
-                // res.render('absenceFormSubmitted', { msg: msg, title: "Late attendance submitted" });
                 return res.status(200).json({
                     success: true,
                     message: "Absence Successfully Submitted",

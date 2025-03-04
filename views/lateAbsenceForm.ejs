@@ -1,5 +1,4 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <div class="container">
 
@@ -31,8 +30,8 @@
       <p class="side"><strong>Section<span class="col4">:</span></strong> <span id="section"></span></p>
       <p class="side"><strong>Mobile Number<span class="col3">:</span></strong> <span id="mobNo"></span></p>
       <p class="side"><strong>Email <span class="mailcol"> :</span></strong> <span id="mailId"></span></p>
-    
-    
+
+
       <form class="" id="absenceReasonForm" method="POST">
         <input type="text" id="Reg_no2" name="Reg_no2" placeholder="Registration Number">
 
@@ -53,12 +52,12 @@
           </div>
         </div>
 
-      <button type="submit" class="btn btn-primary mt-3 submitbtn w-sm-100">Submit Absence</button>
+        <button type="submit" class="btn btn-primary mt-3 submitbtn w-sm-100">Submit Absence</button>
       </form>
     </div>
 
-    </div>
   </div>
+</div>
 </div>
 <script>
   function handleDropdownChange() {
@@ -72,8 +71,6 @@
       document.getElementById('otherText').value = '';
     }
   }
-
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 
@@ -83,11 +80,11 @@
     const reasonEle = document.getElementById('dropdown');
     var value = reasonEle.value;
     var reason = reasonEle.options[reasonEle.selectedIndex].text;
-    if (reason === "Others"){
+    if (reason === "Others") {
       reason = document.getElementById("otherText").value
     }
     const Reg_no2 = document.getElementById('Reg_no2').value;
-    
+
     const response = await fetch('/lateattendance/save-absence', {
       method: 'POST',
       headers: {
@@ -99,7 +96,7 @@
       })
     });
     const data = await response.json();
-    
+
 
     console.log(data);
     if (!response.ok) {
@@ -109,29 +106,27 @@
     if (data.success !== true) {
 
       showAlert(false, data.message)
-      // alert(data.message);
     } else {
-      if (data.late_attendance_count > 3){
-        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, ()=>{
-        location.reload()
+      if (data.late_attendance_count > 5) {
+        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, () => {
+          location.reload()
         })
-      } else if (data.late_attendance_count > 5){
-        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, ()=>{
-        location.reload()
+      } else if (data.late_attendance_count > 3) {
+        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, () => {
+          location.reload()
         })
       } else {
-        showAlert("green", `${data.message}\nLate Count -  ${data.late_attendance_count}`, ()=>{
-        location.reload()
+        showAlert("green", `${data.message}\nLate Count -  ${data.late_attendance_count}`, () => {
+          location.reload()
         })
       }
-      
+
     }
 
 
   });
 </script>
 <script>
-
   const form = document.getElementById('absenceForm');
   form.onsubmit = async (e) => {
     e.preventDefault();
@@ -148,23 +143,20 @@
     });
     const data = await response.json();
     console.log("Data: ", data);
-    if (data.message === "Student not found."){
+    if (data.message === "Student not found.") {
       alert(data.message)
     }
     if (!response.ok) {
       throw new Error('Form Submit Failed');
     }
     const student = data;
-    
+
     document.getElementById("barcodeCont").style.display = "None"
-    // document.getElementById("studentData").style.display = "Block"
-    // console.log(document.getElementById('Reg_no2').value, student.Reg_No)
     document.getElementById('studentName').textContent = student.Student_Name;
     document.getElementById('department').textContent = student.Department;
     document.getElementById('section').textContent = student.Section;
     document.getElementById('mobNo').textContent = student.Mob_no;
     document.getElementById('mailId').textContent = student.Mail_Id;
-    // document.getElementById('residence').textContent = student.Residence;
     document.getElementById('Reg_no2').value = student.Reg_No;
     document.getElementById('studentData').style.display = 'block';
     const box = document.querySelector('#barcodeCont');
@@ -172,7 +164,7 @@
     adjustFooter()
   };
 
-  QuaggaInit = function () {
+  QuaggaInit = function() {
     Quagga.init({
       inputStream: {
         name: "Live",
@@ -194,7 +186,7 @@
       decoder: {
         readers: ["code_128_reader"]
       }
-    }, function (err) {
+    }, function(err) {
       if (err) {
         console.error(err);
         return;
@@ -209,7 +201,7 @@
 
   QuaggaInit()
 
-  Quagga.onDetected(function (result) {
+  Quagga.onDetected(function(result) {
     const code = result.codeResult.code;
     const box = document.querySelector('#barcodeCont');
     box.style.display = 'none';
@@ -220,7 +212,7 @@
     adjustFooter()
   });
 
-  window.addEventListener('beforeunload', function () {
+  window.addEventListener('beforeunload', function() {
     Quagga.stop();
   });
 

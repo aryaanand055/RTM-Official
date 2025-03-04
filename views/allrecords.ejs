@@ -1,20 +1,20 @@
 <div class="container mt-5">
   <h2>Attendance Records for <%= title  %></h2>
   <% if (records.length === 0) { %>
-    <h4 class="m-auto w-100 text-muted">No records found</h44>
-  <% } else { %>
-  <div class="form-group row">
-    <label class="switch my-3 mx-2">
-      <div class="font-weight-bold">Group by Student - </div>
-      <input type="checkbox" id="joinByStudentSwitch">
-      <span for="joinByStudentSwitch" class="slider round"></span>
-    </label>
-    <% if (typeof specificClass === 'undefined') { %>
-    <div class="col-md-3">
-      <label for="yearDropdown">Year of Study</label>
-      <select id="yearDropdown" class="form-control">
-        <option value="">All Years</option>
-        <%  const uniqueYears = records.reduce((acc, record) => {
+  <h4 class="m-auto w-100 text-muted">No records found</h44>
+    <% } else { %>
+    <div class="form-group row">
+      <label class="switch my-3 mx-2">
+        <div class="font-weight-bold">Group by Student - </div>
+        <input type="checkbox" id="joinByStudentSwitch">
+        <span for="joinByStudentSwitch" class="slider round"></span>
+      </label>
+      <% if (typeof specificClass === 'undefined') { %>
+      <div class="col-md-3">
+        <label for="yearDropdown">Year of Study</label>
+        <select id="yearDropdown" class="form-control">
+          <option value="">All Years</option>
+          <%  const uniqueYears = records.reduce((acc, record) => {
           if (!acc.includes(record.YearOfStudy)) {
             acc.push(record.YearOfStudy);
           }
@@ -22,18 +22,18 @@
         }, []);  
         uniqueYears.sort();
         %>
-        <% uniqueYears.forEach(year => { %>
-        <option value="<%= year %>">
-          <%= year %>
-        </option>
-        <% }); %>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <label for="sectionDropdown">Section</label>
-      <select id="sectionDropdown" class="form-control" disabled>
-        <option value="">All Sections</option>
-        <%  const uniqueSections = records.reduce((acc, record) => {
+          <% uniqueYears.forEach(year => { %>
+          <option value="<%= year %>">
+            <%= year %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="sectionDropdown">Section</label>
+        <select id="sectionDropdown" class="form-control" disabled>
+          <option value="">All Sections</option>
+          <%  const uniqueSections = records.reduce((acc, record) => {
           if (!acc.includes(record.Section)) {
             acc.push(record.Section);
           }
@@ -41,121 +41,123 @@
         }, []);  
         uniqueSections.sort();
         %>
-        <% uniqueSections.forEach(section => { %>
-        <option value="<%= section %>">
-          <%= section %>
-        </option>
-        <% }); %>
-      </select>
+          <% uniqueSections.forEach(section => { %>
+          <option value="<%= section %>">
+            <%= section %>
+          </option>
+          <% }); %>
+        </select>
+      </div>
+      <% } %>
+
+
+      <div class="col-md-3">
+        <label for="dateFilter">From Date</label>
+        <input type="date" id="dateFilter" class="form-control">
+      </div>
+      <div class="col-md-3">
+        <label for="dateFilter1">To Date</label>
+        <input type="date" id="dateFilter1" class="form-control">
+      </div>
     </div>
+    <% if (typeof specificClass === 'undefined') { %>
+
+    <label class="switch my-3 mx-2">
+      <div class="font-weight-bold">Group by Class - </div>
+      <input type="checkbox" id="joinByClassSwitch">
+      <span for="joinByClassSwitch" class="slider round"></span>
+    </label>
     <% } %>
+    <div id="table12">
 
-    
-    <div class="col-md-3">
-      <label for="dateFilter">From Date</label>
-      <input type="date" id="dateFilter" class="form-control">
+      <table class="table table-striped mt-4" id="detailedTable">
+        <thead class="thead-dark">
+          <tr>
+            <th>Reg. No.</th>
+            <th>Name</th>
+            <th>Year of Study</th>
+            <th>Section</th>
+            <th>Date and Time <span id="dateSort" style="cursor: pointer;">&#x25B2;</span></th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable">
+
+          <% records.forEach(record => { %>
+          <tr>
+            <td><%= record.Reg_no %></td>
+            <td><%= record.Student_Name %></td>
+            <td><%= record.YearOfStudy %></td>
+            <td><%= record.Section %></td>
+            <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+            <td><%= record.Reason %></td>
+          </tr>
+          <% }); %>
+
+
+        </tbody>
+      </table>
+      <% if (typeof specificClass === 'undefined') { %>
+
+      <table class="table table-striped mt-4 d-none" id="summaryTable">
+        <thead class="thead-dark">
+          <tr>
+            <th>Year of Study</th>
+            <th>Section</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody">
+        </tbody>
+      </table>
+      <% } %>
     </div>
-    <div class="col-md-3">
-      <label for="dateFilter1">To Date</label>
-      <input type="date" id="dateFilter1" class="form-control">
-    </div>
-  </div>
-  <% if (typeof specificClass === 'undefined') { %>
 
-  <label class="switch my-3 mx-2">
-    <div class="font-weight-bold">Group by Class - </div>
-    <input type="checkbox" id="joinByClassSwitch">
-    <span for="joinByClassSwitch" class="slider round"></span>
-  </label>
-  <% } %>
-  <div id="table12">
-
-  <table class="table table-striped mt-4" id="detailedTable">
-    <thead class="thead-dark">
-      <tr>
-        <th>Reg. No.</th>
-        <th>Name</th>
-        <th>Year of Study</th>
-        <th>Section</th>
-        <th>Date and Time <span id="dateSort" style="cursor: pointer;">&#x25B2;</span></th>
-        <th>Reason</th>
-      </tr>
-    </thead>
-    <tbody id="attendanceTable">
-      
-        <% records.forEach(record => { %>
+    <% } %>
+    <table class="table table-striped mt-4 d-none" id="summaryByStudentsTable">
+      <thead class="thead-dark">
         <tr>
-          <td><%= record.Reg_no %></td>
-          <td><%= record.Student_Name %></td>
-          <td><%= record.YearOfStudy %></td>
-          <td><%= record.Section %></td>
-          <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-          <td><%= record.Reason %></td>
+          <th>Reg. No.</th>
+          <th>Student Name</th>
+          <th>Year of Study</th>
+          <th>Section</th>
+          <th>Count</th>
         </tr>
-        <% }); %>
-      
-    
-  </tbody>
-  </table>
-  <% if (typeof specificClass === 'undefined') { %>
-
-  <table class="table table-striped mt-4 d-none" id="summaryTable">
-    <thead class="thead-dark">
-      <tr>
-        <th>Year of Study</th>
-        <th>Section</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody id="summaryTableBody">
-    </tbody>
-  </table>
-  <% } %>
-</div>
-
-  <% } %> 
-  <table class="table table-striped mt-4 d-none" id="summaryByStudentsTable">
-    <thead class="thead-dark">
-      <tr>
-        <th>Reg. No.</th>
-        <th>Student Name</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody id="summaryByStudentsTableBody">
-    </tbody>
-  </table>
+      </thead>
+      <tbody id="summaryByStudentsTableBody">
+      </tbody>
+    </table>
 </div>
 
 
 
 <script>
   const allRecords = <%- JSON.stringify(records) %>;
-  let simplifiedRec = []
+  let simplifiedRec = [];
 
-for (const [key, value] of Object.entries(allRecords)) {
-  let s = {}; 
-  
-  for (const [key1, value1] of Object.entries(value)) {
-    if (key1 == "Reg_No" || key1 == "Student_Name") {
-      s[key1] = value1; 
+  for (const [key, value] of Object.entries(allRecords)) {
+    let s = {};
+
+    for (const [key1, value1] of Object.entries(value)) {
+      if (key1 == "Reg_No" || key1 == "Student_Name" || key1 == "YearOfStudy" || key1 == "Section") {
+        s[key1] = value1;
+      }
+    }
+
+    let existingRecord = simplifiedRec.find(item => item.Reg_No === s.Reg_No && item.Student_Name === s.Student_Name);
+
+    if (existingRecord) {
+      existingRecord.count += 1;
+    } else {
+      s.count = 1;
+      simplifiedRec.push(s);
     }
   }
-  
-  let existingRecord = simplifiedRec.find(item => item.Reg_No === s.Reg_No && item.Student_Name === s.Student_Name);
-  
-  if (existingRecord) {
-    existingRecord.count += 1;
-  } else {
-    s.count = 1;
-    simplifiedRec.push(s);
-  }
-}
-simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
-// console.log("Simplified rec: ", simplifiedRec);
+  simplifiedRec = simplifiedRec.sort((a, b) => b.count - a.count);
+  // console.log("Simplified rec: ", simplifiedRec);
 
-  
-  console.log("All records: ", allRecords)
+  console.log("All records: ", allRecords);
+
   document.addEventListener('DOMContentLoaded', function() {
     <% if (typeof specificClass === 'undefined') { %>
     const yearDropdown = document.getElementById('yearDropdown'),
@@ -168,14 +170,17 @@ simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
       dateFilter = document.getElementById('dateFilter'),
       dateFilter1 = document.getElementById('dateFilter1'),
       detailedTable = document.getElementById('detailedTable'),
-      tableBody = document.getElementById('attendanceTable');
+      tableBody = document.getElementById('attendanceTable'),
+      joinByStudentSwitch = document.getElementById('joinByStudentSwitch'),
+      summaryByStudentsTable = document.getElementById('summaryByStudentsTable'),
+      summaryByStudentsTableBody = document.getElementById('summaryByStudentsTableBody');
     let sortOrder = 'asc',
       filteredRecords = allRecords;
 
     const today = new Date();
     dateFilter.value = new Date(Date.UTC(today.getFullYear(), today.getMonth(), 1)).toISOString().slice(0, 10);
 
-    filterRecords()
+    filterRecords();
 
     function sortRecordsByDate(records, order) {
       return records.sort((a, b) => {
@@ -206,11 +211,8 @@ simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
 
     function filterRecords() {
       <% if (typeof specificClass === 'undefined') { %>
-
       const year = yearDropdown.value;
       const section = sectionDropdown.value;
-
-
       const date = dateFilter.value;
       const date1 = dateFilter1.value;
 
@@ -245,10 +247,9 @@ simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
       });
 
       renderDetailedTable(filteredRecords);
-
       <% } %>
-
     }
+
     <% if (typeof specificClass === 'undefined') { %>
 
     function createSummaryTable(records) {
@@ -267,7 +268,7 @@ simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
       }, {});
 
       for (const key in summary) {
-        const row = `<tr class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info"  onclick="window.location.href = 'records/CSE/${summary[key].YearOfStudy}/${summary[key].Section}'"">
+        const row = `<tr class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info"  onclick="window.location.href = 'records/CSE/${summary[key].YearOfStudy}/${summary[key].Section}'">
                       <td>${summary[key].YearOfStudy}</td>
                       <td>${summary[key].Section}</td>
                       <td>${summary[key].Count}</td>
@@ -284,91 +285,86 @@ simplifiedRec =  simplifiedRec.sort((a, b) => b.count - a.count);
     });
 
     <% if (typeof specificClass === 'undefined') { %>
-
     yearDropdown.addEventListener('change', () => {
       sectionDropdown.disabled = yearDropdown.value === "";
       filterRecords();
     });
-    sectionDropdown.addEventListener('change', ()=>{
+    sectionDropdown.addEventListener('change', () => {
       filterRecords();
     });
     joinByClassSwitch.addEventListener('change', filterRecords);
     <% } %>
 
-   function displayGroupedStudents() {
+    function displayGroupedStudents() {
       let t3Body = document.getElementById("summaryByStudentsTableBody");
-  t3Body.innerHTML = "";
-  <% if (typeof specificClass === 'undefined') { %>
-  let year = yearDropdown.value;
+      t3Body.innerHTML = "";
+      <% if (typeof specificClass === 'undefined') { %>
+      let year = yearDropdown.value;
       let section = sectionDropdown.value;
       <% } %>
 
-  let dateFilter = document.getElementById('dateFilter').value;
-  let dateFilter1 = document.getElementById('dateFilter1').value;
+      let dateFilter = document.getElementById('dateFilter').value;
+      let dateFilter1 = document.getElementById('dateFilter1').value;
 
-  let fromDate = dateFilter ? new Date(dateFilter) : null;
-  let toDate = dateFilter1 ? new Date(dateFilter1) : null;
-  if (toDate) {
-  toDate.setHours(23, 59, 59, 999); // Set time to end of day bcos default is 5:30 am
-}
+      let fromDate = dateFilter ? new Date(dateFilter) : null;
+      let toDate = dateFilter1 ? new Date(dateFilter1) : null;
+      if (toDate) {
+        toDate.setHours(23, 59, 59, 999); // Set time to end of day bcos default is 5:30 am
+      }
 
-  let filteredRec = simplifiedRec.filter(student => {
-    const studentRecords = allRecords.filter(record => 
-      record.Reg_No === student.Reg_No && record.Student_Name === student.Student_Name
-  <% if (typeof specificClass === 'undefined') { %>
+      let filteredRec = simplifiedRec.filter(student => {
+        const studentRecords = allRecords.filter(record =>
+          record.Reg_No === student.Reg_No && record.Student_Name === student.Student_Name <% if (typeof specificClass === 'undefined') { %> &&
+          (year === "" || record.YearOfStudy.toString() === year) &&
+          (section === "" || record.Section === section) <% } %>
+        );
 
-      &&
-      (year === "" || record.YearOfStudy.toString() === year) &&
-      (section === "" || record.Section === section)
+        return studentRecords.some(record => {
+          const recordDate = new Date(record.Late_Date);
+          return (!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate);
+        });
+      });
 
-      <% } %>
-
-    );
-
-    return studentRecords.some(record => {
-      const recordDate = new Date(record.Late_Date);
-      return (!fromDate || recordDate >= fromDate) && (!toDate || recordDate <= toDate);
-    });
-  });
-
-  filteredRec.forEach(student => {
-    const row = `<tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=${student.Reg_No}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+      filteredRec.forEach(student => {
+        const row = `<tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=${student.Reg_No}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
                   <td>${student.Reg_No}</td>
                   <td>${student.Student_Name}</td>
+                  <td>${student.YearOfStudy}</td>
+                  <td>${student.Section}</td>
                   <td>${student.count}</td>
                 </tr>`;
-    t3Body.insertAdjacentHTML('beforeend', row);
-  });
-}
+        t3Body.insertAdjacentHTML('beforeend', row);
+      });
+    }
 
-joinByStudentSwitch.addEventListener('change', () => {
-  let t12 = document.getElementById("table12");
-  let t3 = document.getElementById("summaryByStudentsTable");
+    joinByStudentSwitch.addEventListener('change', () => {
+      let t12 = document.getElementById("table12");
+      let t3 = document.getElementById("summaryByStudentsTable");
 
-  if (joinByStudentSwitch.checked) {
-    t12.classList.add("d-none");
-    t3.classList.remove("d-none");
-    displayGroupedStudents(); 
-  } else {
-    t12.classList.remove("d-none");
-    t3.classList.add("d-none");
-  }
-});
-<% if (typeof specificClass === 'undefined') { %>
+      if (joinByStudentSwitch.checked) {
+        t12.classList.add("d-none");
+        t3.classList.remove("d-none");
+        joinByClassSwitch.checked = false; // Disable Group by Class
+        filterRecords(); // Apply date filter
+        displayGroupedStudents();
+      } else {
+        t12.classList.remove("d-none");
+        t3.classList.add("d-none");
+      }
+    });
 
-yearDropdown.addEventListener('change', () => {
+    <% if (typeof specificClass === 'undefined') { %>
+    yearDropdown.addEventListener('change', () => {
       sectionDropdown.disabled = yearDropdown.value === "";
       displayGroupedStudents();
     });
-    sectionDropdown.addEventListener('change', ()=>{
+    sectionDropdown.addEventListener('change', () => {
       displayGroupedStudents();
     });
-
-
     <% } %>
 
-dateFilter.addEventListener('change', displayGroupedStudents);
-dateFilter1.addEventListener('change', displayGroupedStudents);
+    dateFilter.addEventListener('change', displayGroupedStudents);
+    dateFilter1.addEventListener('change', displayGroupedStudents);
 
     dateFilter.addEventListener('change', filterRecords);
     dateFilter1.addEventListener('change', filterRecords);
