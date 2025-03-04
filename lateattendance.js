@@ -4,7 +4,7 @@ require('dotenv').config();
 const path = require("path")
 
 //Port for viewing on localhost
-const portToUse = 8090
+const portToUse = 8090;
 
 const expTime = 3600 //in seconds
 
@@ -246,6 +246,28 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                                         `;
                                             db.query(dailyAttendanceQuery, [dept, YOS, Sec], (err, results) => {
                                                 if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
+                                                // Create array with name, count, and reg no
+                                                let studentData = {}
+                                                records.forEach(record => {
+                                                    if (studentData[record.Reg_No]) {
+                                                        studentData[record.Reg_No].count += 1
+                                                    } else {
+                                                        studentData[record.Reg_No] = {
+                                                            name: record.Student_Name,
+                                                            count: 1
+                                                        }
+                                                    }
+                                                })
+                                                studentData = Object.entries(studentData).map(([regNo, data]) => ({ regNo, ...data })).sort((a, b) => b.count - a.count)
+                                                let studentData1 = []
+                                                // Populate studentData1 from records. inlcude only those of today's data and this section
+                                                records.forEach(record => {
+                                                    if (record.Late_Date.toDateString() === new Date().toDateString() && record.Section === Sec && record.YearOfStudy === YOS) {
+                                                        studentData1.push(record)
+                                                    }
+                                                })
+                                                console.log(records, studentData1)
+
                                                 res.render('dashboard', {
                                                     title: "Dashboard",
                                                     tutor: true,
@@ -258,7 +280,9 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                                                     recentActivities: recentActivities,
                                                     records: records,
                                                     attendanceResults: results,
-                                                    title: "Tutor Dashboard"
+                                                    title: "Tutor Dashboard",
+                                                    studentData: studentData,
+                                                    studentData1: studentData1
                                                 });
                                             });
                                         }
@@ -489,7 +513,6 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
             console.error('Error fetching records:', err);
             return res.send('Error fetching records');
         }
-
         if (result.length === 0) {
             return res.send('No records found for the user.');
         }

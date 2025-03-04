@@ -133,6 +133,7 @@
 
 <script>
   const allRecords = <%- JSON.stringify(records) %>;
+  console.log(allRecords)
   let simplifiedRec = [];
 
   for (const [key, value] of Object.entries(allRecords)) {
@@ -154,7 +155,7 @@
     }
   }
   simplifiedRec = simplifiedRec.sort((a, b) => b.count - a.count);
-  // console.log("Simplified rec: ", simplifiedRec);
+  console.log("Simplified rec: ", simplifiedRec);
 
   console.log("All records: ", allRecords);
 

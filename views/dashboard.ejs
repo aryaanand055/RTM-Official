@@ -6,20 +6,18 @@
   <h2 class="h2">Tutor Dashboard - <%= getOrdinal(YOS) %> Year [ <%= section %> ]</h2>
   <% }  %>
 
-
-  <hr class="hr">
-
-  <!-- Records -->
-  <!-- Check if -->
-  <% if (typeof tutor === 'undefined') { %>
   <div class="card p-3">
-    <h3 class="h3">Attendance Records for <%= dept  %></h3>
-    <div class="form-group row">
-      <div class="col-md-4">
-        <label for="yearDropdown">Year of Study</label>
-        <select id="yearDropdown" class="form-control">
-          <option value="">All Years</option>
-          <%  const uniqueYears = records.reduce((acc, record) => {
+
+    <!-- Records -->
+    <% if (typeof tutor === 'undefined') { %>
+    <div class="card p-3">
+      <h3 class="h3">Attendance Records for <%= dept  %></h3>
+      <div class="form-group row">
+        <div class="col-md-4">
+          <label for="yearDropdown">Year of Study</label>
+          <select id="yearDropdown" class="form-control">
+            <option value="">All Years</option>
+            <%  const uniqueYears = records.reduce((acc, record) => {
           if (!acc.includes(record.YearOfStudy)) {
             acc.push(record.YearOfStudy);
           }
@@ -27,18 +25,18 @@
         }, []);  
         uniqueYears.sort();
         %>
-          <% uniqueYears.forEach(year => { %>
-          <option value="<%= year %>">
-            <%= year %>
-          </option>
-          <% }); %>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label for="sectionDropdown">Section</label>
-        <select id="sectionDropdown" class="form-control" disabled>
-          <option value="">All Sections</option>
-          <%  const uniqueSections = records.reduce((acc, record) => {
+            <% uniqueYears.forEach(year => { %>
+            <option value="<%= year %>">
+              <%= year %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="sectionDropdown">Section</label>
+          <select id="sectionDropdown" class="form-control" disabled>
+            <option value="">All Sections</option>
+            <%  const uniqueSections = records.reduce((acc, record) => {
           if (!acc.includes(record.Section)) {
             acc.push(record.Section);
           }
@@ -46,81 +44,151 @@
         }, []);  
         uniqueSections.sort();
         %>
-          <% uniqueSections.forEach(section => { %>
-          <option value="<%= section %>">
-            <%= section %>
-          </option>
+            <% uniqueSections.forEach(section => { %>
+            <option value="<%= section %>">
+              <%= section %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="dateFilter">Date</label>
+          <input type="date" id="dateFilter" class="form-control">
+        </div>
+      </div>
+
+      <label class="switch">
+        <div class="font-weight-bold">Condensed view - </div>
+        <input type="checkbox" id="joinByClassSwitch">
+        <span for="joinByClassSwitch" class="slider round"></span>
+      </label>
+
+      <table class="table table-striped mt-4" id="detailedTable">
+        <thead class="thead-dark">
+          <tr>
+            <th>Reg. No.</th>
+            <th>Name</th>
+            <th>Year of Study</th>
+            <th>Section</th>
+            <th>Date and Time</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTable">
+
+
+          <% records.forEach(record => { %>
+          <tr>
+            <td><%= record.Reg_No %></td>
+            <td><%= record.Student_Name %></td>
+            <td><%= record.YearOfStudy %></td>
+            <td><%= record.Section %></td>
+            <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+            <td><%= record.Reason %></td>
+          </tr>
           <% }); %>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label for="dateFilter">Date</label>
-        <input type="date" id="dateFilter" class="form-control">
-      </div>
+        </tbody>
+      </table>
+
+      <table class="table table-striped mt-4 d-none" id="summaryTable">
+        <thead class="thead-dark">
+          <tr>
+            <th>Year of Study</th>
+            <th>Section</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody">
+        </tbody>
+      </table>
     </div>
 
-    <label class="switch">
-      <div class="font-weight-bold">Condensed view - </div>
-      <input type="checkbox" id="joinByClassSwitch">
-      <span for="joinByClassSwitch" class="slider round"></span>
-    </label>
+    <hr class="hr">
+    <% } else {%>
+    <!-- Records for today for specific class and section -->
+    <div class="card p-3">
+      <h3 class="h3">Late Attendance Count <small class="small muted text-muted fs-6">[Since Previous Reset]</small></h3>
+      <table class="table table-striped mt-4" id="studentLateCountTable">
+        <thead class="thead-dark">
+          <tr>
+            <th>Reg. No.</th>
+            <th>Name</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody id="studentLateCountTableBody">
+          <% for (let regNo in studentData) { %>
+          <tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=<%= studentData[regNo].regNo %>'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+            <td><%= studentData[regNo].regNo %></td>
+            <td><%= studentData[regNo].name %></td>
+            <td><%= studentData[regNo].count %></td>
+          </tr>
+          <%  } %>
+        </tbody>
+      </table>
+      <h3 class="h3">Records for today</h3>
+      <!-- check if records exist or return no records today -->
+      <% if (studentData1.length === 0 ) { %>
+      No records for today
+      <% } else { %>
 
-    <table class="table table-striped mt-4" id="detailedTable">
-      <thead class="thead-dark">
-        <tr>
-          <th>Reg. No.</th>
-          <th>Name</th>
-          <th>Year of Study</th>
-          <th>Section</th>
-          <th>Date and Time</th>
-          <th>Reason</th>
-        </tr>
-      </thead>
-      <tbody id="attendanceTable">
+      <table class="table table-striped" id="studentReasonDayTable">
+        <!--All student records for that class on that day  -->
+        <thead class="thead-dark">
+          <tr>
+            <th>Reg. No.</th>
+            <th>Name</th>
+            <th>Reason</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="studentReasonDayTableBody">
+          <% for (let regNo in studentData1) { %>
+          <tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=<%= studentData[regNo].regNo %>'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+            <td><%= studentData[regNo].regNo %></td>
+            <td><%= studentData[regNo].name %></td>
+            <td><%= studentData[regNo].count %></td>
+          </tr>
+          <%  } %>
+        </tbody>
 
-
-        <% records.forEach(record => { %>
-        <tr>
-          <td><%= record.Reg_No %></td>
-          <td><%= record.Student_Name %></td>
-          <td><%= record.YearOfStudy %></td>
-          <td><%= record.Section %></td>
-          <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-          <td><%= record.Reason %></td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-
-    <table class="table table-striped mt-4 d-none" id="summaryTable">
-      <thead class="thead-dark">
-        <tr>
-          <th>Year of Study</th>
-          <th>Section</th>
-          <th>Count</th>
-        </tr>
-      </thead>
-      <tbody id="summaryTableBody">
-      </tbody>
-    </table>
-  </div>
-  <hr class="hr">
-  <% }%>
-  <!-- Graphs -->
-  <div class="card p-3 ">
-    <h3 class="h3">Graph</h3>
-    <% if (typeof tutor === 'undefined') { %>
-
-    <small class="text-muted">Classes with no late attendance recorded are not shown below</small>
+      </table>
+      <% } %>
+    </div>
     <% }%>
 
-    <div class="row">
-      <div class="col-md-6">
-        <% if (typeof tutor === 'undefined') { %>
-        <label for="yearDropdown1">Year of Study</label>
-        <select id="yearDropdown1" class="form-control">
-          <option value="0">All Years</option>
-          <%  const uniqueYears1 = records.reduce((acc, record) => {
+    <hr class="hr">
+
+    <!-- Quick Student Lookup -->
+    <div class="card p-3">
+      <h3 class="h3 text-center mb-3">Quick Student Lookup</h3>
+      <p class="text-muted text-center mb-4">
+        Enter the student's registration number to quickly view their details.
+      </p>
+      <form action="/lateattendance/fetchStudentDetails" method="GET" class="d-flex justify-content-center">
+        <div class="btn-group w-auto mb-3" role="group">
+          <input type="text" name="reg_no" class="form-control form-control-lg rounded-0" placeholder="Registration Number" required>
+          <button type="submit" class="btn btn-primary btn-lg rounded-right">Search</button>
+        </div>
+      </form>
+    </div>
+    <hr class="hr">
+
+    <!-- Graphs -->
+    <div class="p-3 card">
+      <h3 class="h3">Late arrival report</h3>
+      <% if (typeof tutor === 'undefined') { %>
+
+      <small class="text-muted">Classes with no late attendance recorded are not shown below</small>
+      <% }%>
+
+      <div class="row">
+        <div class="col-md-6">
+          <% if (typeof tutor === 'undefined') { %>
+          <label for="yearDropdown1">Year of Study</label>
+          <select id="yearDropdown1" class="form-control">
+            <option value="0">All Years</option>
+            <%  const uniqueYears1 = records.reduce((acc, record) => {
           if (!acc.includes(record.YearOfStudy)) {
             acc.push(record.YearOfStudy);
           }
@@ -128,53 +196,37 @@
         }, []);  
         uniqueYears1.sort();
         %>
-          <% uniqueYears1.forEach(year => { %>
-          <option value="<%= year %>">
-            <%= year %>
-          </option>
-          <% }); %>
-        </select>
-      </div>
-      <% }%>
+            <% uniqueYears1.forEach(year => { %>
+            <option value="<%= year %>">
+              <%= year %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+        <% }%>
 
-      <div class="col-md-6 mb-4">
-        <!-- Number of Days -->
-        <label for="daysDropdown1">Number of Days</label>
-        <select id="daysDropdown1" class="form-control">
-          <option value="7">Last 7 Days</option>
-          <option value="14">Last 14 Days</option>
-          <option value="30" selected>Last 30 Days</option>
-        </select>
+        <div class="col-md-6 mb-4">
+          <!-- Number of Days -->
+          <label for="daysDropdown1">Number of Days</label>
+          <select id="daysDropdown1" class="form-control">
+            <option value="7">Last 7 Days</option>
+            <option value="14">Last 14 Days</option>
+            <option value="30" selected>Last 30 Days</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <div class="container" id="chartsContainer">
-      <canvas id="myChart"></canvas>
+      <div class="container" id="chartsContainer">
+        <canvas id="myChart"></canvas>
+      </div>
     </div>
   </div>
 
-
-
-  <hr class="hr">
-
-  <!-- Quick Student Lookup -->
-  <div class="card p-4">
-    <h3 class="h3 text-center mb-3">Quick Student Lookup</h3>
-    <p class="text-muted text-center mb-4">
-      Enter the student's registration number to quickly view their details.
-    </p>
-    <form action="/lateattendance/fetchStudentDetails" method="GET" class="d-flex justify-content-center">
-      <div class="btn-group w-auto mb-3" role="group">
-        <input type="text" name="reg_no" class="form-control form-control-lg rounded-0" placeholder="Registration Number" required>
-        <button type="submit" class="btn btn-primary btn-lg rounded-right">Search</button>
-      </div>
-    </form>
-  </div>
 
   <hr class="hr">
 
   <!-- Recent Activity -->
-  <div class="card p-3" style=" margin-bottom: 70px;">
+  <div class="card p-3">
     <h3 class="h3">Recent Activity (last 10)</h3>
     <ul class="list-group list-group-flush">
       <% recentActivities.forEach(activity=> { %>
@@ -191,11 +243,13 @@
     </ul>
   </div>
 </div>
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Script for displaying records - Condensed and Detailed -->
 <script>
-  const allRecords =  <%- JSON.stringify(records) %>;
+  const allRecords = <%- JSON.stringify(records) %>;
   const dataFromAPI = <%- JSON.stringify(attendanceResults) %>;
 
   <% if (typeof tutor === 'undefined') { %>
