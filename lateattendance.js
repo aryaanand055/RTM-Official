@@ -4,7 +4,7 @@ require('dotenv').config();
 const path = require("path")
 
 //Port for viewing on localhost
-const portToUse = 8090;
+const portToUse = 8090
 
 const expTime = 3600 //in seconds
 

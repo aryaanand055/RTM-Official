@@ -39,10 +39,11 @@
         <label class="side" for="reason"><strong>Reason<span class="mailcol-2"> :</span></strong></label>
         <select class="w-50" id="dropdown" name="reason" onchange="handleDropdownChange()" size="1">
           <option value="Option " class="ps-3">---Select---</option>
-          <option value="Option 1">Transport Issues</option>
-          <option value="Option 2">Weather Conditions</option>
-          <option value="Option 3">Medical Reasons</option>
-          <option value="Option 5">Emergency</option>
+          <option value="Option 1">Woke up late</option>
+          <option value="Option 2">Transport Delay</option>
+          <option value="Option 3">Medical Emergency</option>
+          <option value="Option 5">Hostel Food</option>
+          <option value="Option 6">Hostel Water</option>
           <option value="Others">Others</option>
         </select>
 
@@ -111,12 +112,12 @@
       showAlert(false, data.message)
       // alert(data.message);
     } else {
-      if (data.late_attendance_count > 3){
-        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, ()=>{
+      if (data.late_attendance_count > 5){
+        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, ()=>{
         location.reload()
         })
-      } else if (data.late_attendance_count > 5){
-        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, ()=>{
+      } else if (data.late_attendance_count > 3){
+        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, ()=>{
         location.reload()
         })
       } else {
