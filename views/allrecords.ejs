@@ -133,7 +133,6 @@
 
 <script>
   const allRecords = <%- JSON.stringify(records) %>;
-  console.log(allRecords)
   let simplifiedRec = [];
 
   for (const [key, value] of Object.entries(allRecords)) {
@@ -155,9 +154,7 @@
     }
   }
   simplifiedRec = simplifiedRec.sort((a, b) => b.count - a.count);
-  console.log("Simplified rec: ", simplifiedRec);
 
-  console.log("All records: ", allRecords);
 
   document.addEventListener('DOMContentLoaded', function() {
     <% if (typeof specificClass === 'undefined') { %>
@@ -293,7 +290,11 @@
     sectionDropdown.addEventListener('change', () => {
       filterRecords();
     });
-    joinByClassSwitch.addEventListener('change', filterRecords);
+    joinByClassSwitch.addEventListener('change', () => {
+      filterRecords();
+      joinByStudentSwitch.checked = false;
+      joinByStudentFunction();
+    });
     <% } %>
 
     function displayGroupedStudents() {
@@ -338,7 +339,7 @@
       });
     }
 
-    joinByStudentSwitch.addEventListener('change', () => {
+    function joinByStudentFunction() {
       let t12 = document.getElementById("table12");
       let t3 = document.getElementById("summaryByStudentsTable");
 
@@ -352,6 +353,10 @@
         t12.classList.remove("d-none");
         t3.classList.add("d-none");
       }
+    }
+
+    joinByStudentSwitch.addEventListener('change', () => {
+      joinByStudentFunction()
     });
 
     <% if (typeof specificClass === 'undefined') { %>

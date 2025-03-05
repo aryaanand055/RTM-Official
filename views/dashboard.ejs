@@ -58,7 +58,7 @@
       </div>
 
       <label class="switch">
-        <div class="font-weight-bold">Condensed view - </div>
+        <div class="font-weight-bold">Group by Class - </div>
         <input type="checkbox" id="joinByClassSwitch">
         <span for="joinByClassSwitch" class="slider round"></span>
       </label>
@@ -220,27 +220,27 @@
         <canvas id="myChart"></canvas>
       </div>
     </div>
-  </div>
 
 
-  <hr class="hr">
+    <hr class="hr">
 
-  <!-- Recent Activity -->
-  <div class="card p-3">
-    <h3 class="h3">Recent Activity (last 10)</h3>
-    <ul class="list-group list-group-flush">
-      <% recentActivities.forEach(activity=> { %>
-      <li class="list-group-item">
-        <%= activity.Reg_No %> - <%= getOrdinal(activity.YearOfStudy) %> Year - <%= activity.Section %> - <%=
+    <!-- Recent Activity -->
+    <div class="card p-3">
+      <h3 class="h3">Recent Activity (last 10)</h3>
+      <ul class="list-group list-group-flush">
+        <% recentActivities.forEach(activity=> { %>
+        <li class="list-group-item">
+          <%= activity.Reg_No %> - <%= getOrdinal(activity.YearOfStudy) %> Year - <%= activity.Section %> - <%=
                     activity.Student_name %>
-        <span class="recent_record float-right">
-          <%= new Date(activity.Late_Date).toLocaleString('en-US', { weekday: 'short' , month: 'short' ,
+          <span class="recent_record float-right">
+            <%= new Date(activity.Late_Date).toLocaleString('en-US', { weekday: 'short' , month: 'short' ,
                         day: '2-digit' , year: 'numeric' , hour: '2-digit' , minute: '2-digit' , second: '2-digit' ,
                         hour12: false }) %>
-        </span>
-      </li>
-      <% }); %>
-    </ul>
+          </span>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -363,19 +363,7 @@
   }
   const daysDropdown1 = document.getElementById("daysDropdown1")
 
-  // async function fetchDailyAttendance() {
-  //   const response = await fetch('/api/hod-dashboard/daily', {
-  //     method: 'GET',
-  //       mode: 'no-cors'
-  //   });
-  //   console.log(response)
 
-  //   data = await response.json();
-  //   // console.log(response)
-  //   // console.log(data)
-
-  //   return data
-  // }
 
   function normalizeDate(dateString) {
     const date = new Date(dateString);
@@ -412,7 +400,6 @@
   }
 
   async function createDailyCharts() {
-    // const dataFromAPI = await fetchDailyAttendance();
     yod1 = "0"
     if (yearDropdown1 !== null) {
       yod1 = yearDropdown1.value
