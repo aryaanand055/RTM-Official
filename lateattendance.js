@@ -39,7 +39,21 @@ const checkIfLoggedIn = (req, res, next) => {
             req.isLoggedIn = false;
         } else {
             req.isLoggedIn = true;
-            req.user = { Reg_No: result.Reg_No, accessRole: result.Access_Role };
+            let deptN;
+            db.query("SELECT * FROM staff_data WHERE Reg_No = ?", [result.Reg_No], (err,resu)=>{
+                if(err){
+                    console.error("Database error:", err);
+                    return res.send(`Database error: ${err}`);
+                }
+                if (resu.length === 0) {
+                    return res.send("User not found");
+                }
+
+                // const userRole = results[0].Access_Role;
+                deptN = resu[0].Department;
+
+            })
+            req.user = { Reg_No: result.Reg_No, accessRole: result.Access_Role,Dept: deptN };
         }
         next();
     });
@@ -246,27 +260,28 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                                         `;
                                             db.query(dailyAttendanceQuery, [dept, YOS, Sec], (err, results) => {
                                                 if (err) return res.status(500).json({ error: 'Error fetching daily attendance data' });
-                                                // Create array with name, count, and reg no
                                                 let studentData = {}
                                                 records.forEach(record => {
-                                                    if (studentData[record.Reg_No]) {
-                                                        studentData[record.Reg_No].count += 1
-                                                    } else {
-                                                        studentData[record.Reg_No] = {
-                                                            name: record.Student_Name,
-                                                            count: 1
+                                                    if (record.YearOfStudy === YOS && record.Section == Sec) {
+                                                        if (studentData[record.Reg_No]) {
+                                                            studentData[record.Reg_No].count += 1
+                                                        } else {
+                                                            studentData[record.Reg_No] = {
+                                                                name: record.Student_Name,
+                                                                count: 1
+                                                            }
                                                         }
                                                     }
+                                                    
                                                 })
                                                 studentData = Object.entries(studentData).map(([regNo, data]) => ({ regNo, ...data })).sort((a, b) => b.count - a.count)
                                                 let studentData1 = []
-                                                // Populate studentData1 from records. inlcude only those of today's data and this section
                                                 records.forEach(record => {
                                                     if (record.Late_Date.toDateString() === new Date().toDateString() && record.Section === Sec && record.YearOfStudy === YOS) {
                                                         studentData1.push(record)
                                                     }
                                                 })
-                                                console.log(records, studentData1)
+                                                // console.log(records, studentData1)
 
                                                 res.render('dashboard', {
                                                     title: "Dashboard",
@@ -540,7 +555,12 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
                 console.error('Error fetching records:', err);
                 return res.send('Error fetching records');
             }
-            const title = `${Dept} - ${Class} ${Sec}`;
+ function getOrdinal(num) { 
+    const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]
+} 
+
+            let yearWithOrdianal = getOrdinal(Class)
+            const title = `${yearWithOrdianal} Year ${Sec}`;
             res.render('allrecords', { records: results, title: title, dept: Dept, Class: Class, Sec: Sec, specificClass: true });
         });
     });

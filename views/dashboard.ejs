@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <label class="switch">
+      <label class="switch my-2">
         <div class="font-weight-bold">Condensed view - </div>
         <input type="checkbox" id="joinByClassSwitch">
         <span for="joinByClassSwitch" class="slider round"></span>
@@ -126,7 +126,8 @@
           <%  } %>
         </tbody>
       </table>
-      <h3 class="h3">Records for today</h3>
+      <hr class="hr>">
+      <h3 class="h3">Records for today</h3> 
       <!-- check if records exist or return no records today -->
       <% if (studentData1.length === 0 ) { %>
       No records for today
@@ -144,10 +145,13 @@
         </thead>
         <tbody id="studentReasonDayTableBody">
           <% for (let regNo in studentData1) { %>
-          <tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=<%= studentData[regNo].regNo %>'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
-            <td><%= studentData[regNo].regNo %></td>
-            <td><%= studentData[regNo].name %></td>
-            <td><%= studentData[regNo].count %></td>
+          <tr>
+            <td><%= studentData1[regNo].Reg_No %></td>
+            <td><%= studentData1[regNo].Student_Name %></td>
+            <td><%= studentData1[regNo].Reason %></td>
+            <td><%= new Date(studentData1[regNo].Late_Date).toLocaleTimeString() %></td>
+
+            <!-- <td><%= studentData1[regNo].Late_Date %></td> -->
           </tr>
           <%  } %>
         </tbody>
@@ -252,6 +256,7 @@
   const allRecords = <%- JSON.stringify(records) %>;
   const dataFromAPI = <%- JSON.stringify(attendanceResults) %>;
 
+
   <% if (typeof tutor === 'undefined') { %>
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -323,7 +328,7 @@
       }, {});
       const department = "<%= dept %>".toLocaleLowerCase();
       Object.values(summary).forEach(record => {
-        const row = `<tr onclick="window.location.href = 'records/${department}/${record.YearOfStudy}/${record.Section}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+        const row = `<tr onclick="window.location.href = 'records/${department}/${record.YearOfStudy}/${record.Section}'" class="table_link"  data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
   <td>${record.YearOfStudy}</td>
   <td>${record.Section}</td>
   <td>${record.Count}</td>
@@ -348,7 +353,6 @@
 <script>
   const yearDropdown1 = document.getElementById("yearDropdown1")
 
-
   function generateLastXDays(n) {
     const dates = [];
     const now = new Date();
@@ -363,19 +367,6 @@
   }
   const daysDropdown1 = document.getElementById("daysDropdown1")
 
-  // async function fetchDailyAttendance() {
-  //   const response = await fetch('/api/hod-dashboard/daily', {
-  //     method: 'GET',
-  //       mode: 'no-cors'
-  //   });
-  //   console.log(response)
-
-  //   data = await response.json();
-  //   // console.log(response)
-  //   // console.log(data)
-
-  //   return data
-  // }
 
   function normalizeDate(dateString) {
     const date = new Date(dateString);
@@ -421,7 +412,6 @@
       groupedData,
       lastXDays
     } = processAttendanceData(dataFromAPI, yod1);
-    console.log(dataFromAPI, allRecords)
     const chartContainer = document.getElementById('chartsContainer');
     chartContainer.innerHTML = '';
 

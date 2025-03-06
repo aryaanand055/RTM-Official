@@ -108,12 +108,12 @@
 
       showAlert(false, data.message)
     } else {
-      if (data.late_attendance_count > 3) {
-        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, () => {
+      if (data.late_attendance_count > 5) {
+        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, () => {
           location.reload()
         })
-      } else if (data.late_attendance_count > 5) {
-        showAlert("red", `This student has been late for more than 5 times.\n Please inform the HOD. \n`, () => {
+      } else if (data.late_attendance_count > 3) {
+        showAlert("yellow", `This student has been late for more than 3 times.\n Please inform the tutor. \n`, () => {
           location.reload()
         })
       } else {
