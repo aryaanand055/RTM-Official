@@ -158,6 +158,7 @@
   }
   simplifiedRec = simplifiedRec.sort((a, b) => b.count - a.count);
 
+
   document.addEventListener('DOMContentLoaded', function() {
     <% if (typeof specificClass === 'undefined') { %>
     const yearDropdown = document.getElementById('yearDropdown'),
@@ -293,7 +294,11 @@
     sectionDropdown.addEventListener('change', () => {
       filterRecords();
     });
-    joinByClassSwitch.addEventListener('change', filterRecords);
+    joinByClassSwitch.addEventListener('change', () => {
+      filterRecords();
+      joinByStudentSwitch.checked = false;
+      joinByStudentFunction();
+    });
     <% } %>
 
     function displayGroupedStudents() {
@@ -338,7 +343,7 @@
       });
     }
 
-    joinByStudentSwitch.addEventListener('change', () => {
+    function joinByStudentFunction() {
       let t12 = document.getElementById("table12");
       let t3 = document.getElementById("summaryByStudentsTable");
 
@@ -352,6 +357,10 @@
         t12.classList.remove("d-none");
         t3.classList.add("d-none");
       }
+    }
+
+    joinByStudentSwitch.addEventListener('change', () => {
+      joinByStudentFunction()
     });
 
     <% if (typeof specificClass === 'undefined') { %>
