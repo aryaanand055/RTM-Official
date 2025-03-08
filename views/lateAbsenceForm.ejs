@@ -49,7 +49,7 @@
         <div class="text-box " id="textBoxContainer">
           <div class="d-flex">
             <p class="side" for="otherText"><strong>Please specify<span class="inputbox"> :</span></strong></p>
-            <input class="rounded-1 h-25 w-50" type="text" id="otherText" name="reason1" placeholder="Enter your input">
+            <input class="rounded-1 w-50" type="text" id="otherText" name="reason1" placeholder="Enter your input">
           </div>
         </div>
 
@@ -67,9 +67,17 @@
 
     if (dropdown.value === 'Others') {
       textBoxContainer.style.display = 'block';
+      textBoxContainer.style.opacity = '0';
+      setTimeout(() => {
+        textBoxContainer.style.opacity = '1';
+        textBoxContainer.style.transition = 'opacity 0.3s ease-in-out';
+      }, 10);
     } else {
-      textBoxContainer.style.display = 'none';
-      document.getElementById('otherText').value = '';
+      textBoxContainer.style.opacity = '0';
+      setTimeout(() => {
+        textBoxContainer.style.display = 'none';
+        document.getElementById('otherText').value = '';
+      }, 300);
     }
   }
 </script>
