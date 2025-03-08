@@ -75,6 +75,7 @@ const authenticateJWT = (allowedRoles = []) => {
 
         jwt.verify(token, process.env.JWT_SECRET, (err, resultVer) => {
             if (err) {
+                console.error(err)
                 return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
 
                 // return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
@@ -134,6 +135,16 @@ db.connect(err => {
     if (err) throw err;
     console.log('MySQL Connected...');
 });
+
+setInterval(() => {
+      db.query('SELECT 1', (err, results) => {
+        if (err) {
+          console.error('Error keeping MySQL connection alive:', err);
+        } else {
+          console.log('MYSQL Connection kept alive');
+        }
+      });
+    }, 60 * 60 * 1000); 
 
 // For the header and footer content
 const expressLayouts = require('express-ejs-layouts');
@@ -241,7 +252,9 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                                                     prevData: prevData,
                                                     recentActivities: recentActivities,
                                                     records: records,
-                                                    attendanceResults: results
+                                                    attendanceResults: results,
+                                                    studentData: {},
+                                                    studentData1: {}
                                                 });
                                             });
                                         } else {
@@ -394,6 +407,8 @@ app.post("/login", (req, res) => {
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
     db.query(query, [Reg_No], (err, result) => {
         if (err) {
+            console.error(err);
+            
             return res.json({
                 success: false,
                 message: "Error occurred while logging in"
@@ -604,6 +619,7 @@ app.post('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
     const query = 'SELECT * FROM student_data WHERE Reg_no = ?';
     db.query(query, [regNo], (err, results) => {
         if (err) {
+            console.error(err)
             return res.status(500).json({ error: err });
         }
         if (results.length === 0) {

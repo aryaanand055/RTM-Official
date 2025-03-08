@@ -70,7 +70,9 @@
       <input type="checkbox" id="joinByClassSwitch">
       <span for="joinByClassSwitch" class="slider round"></span>
     </label>
-    <% } %>
+    <% } else {%>
+      <input type="checkbox" id="joinByClassSwitch" class="d-none">
+      <% } %>
     <div id="table12">
 
       <table class="table table-striped mt-4" id="detailedTable">
@@ -166,7 +168,7 @@
       joinByClassSwitch = document.getElementById('joinByClassSwitch'),
       summaryTableBody = document.getElementById('summaryTableBody');
     <% } %>
-
+    
     const summaryTable = document.getElementById('summaryTable'),
       dateFilter = document.getElementById('dateFilter'),
       dateFilter1 = document.getElementById('dateFilter1'),
@@ -350,7 +352,7 @@
       if (joinByStudentSwitch.checked) {
         t12.classList.add("d-none");
         t3.classList.remove("d-none");
-        // joinByClassSwitch.checked = false; // Disable Group by Class
+        joinByClassSwitch.checked = false;
         filterRecords(); // Apply date filter
         displayGroupedStudents();
       } else {

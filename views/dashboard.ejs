@@ -117,12 +117,18 @@
           </tr>
         </thead>
         <tbody id="studentLateCountTableBody">
+          <% if (Object.keys(studentData).length === 0) { %>
+            <tr>
+              <td colspan="3">No student data available</td>
+            </tr>
+          <% } else { %>
           <% for (let regNo in studentData) { %>
           <tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=<%= studentData[regNo].regNo %>'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
             <td><%= studentData[regNo].regNo %></td>
             <td><%= studentData[regNo].name %></td>
             <td><%= studentData[regNo].count %></td>
           </tr>
+          <%  } %>
           <%  } %>
         </tbody>
       </table>
