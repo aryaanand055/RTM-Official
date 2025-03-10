@@ -40,8 +40,8 @@ const checkIfLoggedIn = (req, res, next) => {
         } else {
             req.isLoggedIn = true;
             let deptN;
-            db.query("SELECT * FROM staff_data WHERE Reg_No = ?", [result.Reg_No], (err,resu)=>{
-                if(err){
+            db.query("SELECT * FROM staff_data WHERE Reg_No = ?", [result.Reg_No], (err, resu) => {
+                if (err) {
                     console.error("Database error:", err);
                     return res.send(`Database error: ${err}`);
                 }
@@ -53,7 +53,7 @@ const checkIfLoggedIn = (req, res, next) => {
                 deptN = resu[0].Department;
 
             })
-            req.user = { Reg_No: result.Reg_No, accessRole: result.Access_Role,Dept: deptN };
+            req.user = { Reg_No: result.Reg_No, accessRole: result.Access_Role, Dept: deptN };
         }
         next();
     });
@@ -66,49 +66,55 @@ app.use((req, res, next) => {
     next();
 });
 
-const authenticateJWT = (allowedRoles = []) => {
+const authenticateJWT = (allowedRoles = []) =>
     return (req, res, next) => {
-        const token = req.cookies.logintoken;
-        if (!token) {
-            return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Please login to continue")}`);
+    const token = req.cookies.logintoken;
+    if (!token) {
+        return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Please login to continue")}`);
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, resultVer) => {
+        if (err) {
+            console.error(err);
+            return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
         }
 
-        jwt.verify(token, process.env.JWT_SECRET, (err, resultVer) => {
-            if (err) {
-                console.error(err)
-                return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
+        const { Reg_No } = resultVer;
 
-                // return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
+        const query = 'SELECT * FROM staff_data WHERE Reg_No = ?';
+        db.query(query, [Reg_No], (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.send(`Database error: ${err}`);
             }
 
-            const { Reg_No } = resultVer;
+            if (results.length === 0) {
+                return res.send("User not found");
+            }
 
-            const query = 'SELECT * FROM staff_data WHERE Reg_No = ?';
-            db.query(query, [Reg_No], (err, results) => {
-                if (err) {
-                    console.error("Database error:", err);
-                    return res.send(`Database error: ${err}`);
-                }
+            const userRole = results[0].Access_Role;
+            const dept = results[0].Department;
 
-                if (results.length === 0) {
-                    return res.send("User not found");
-                }
+            if (!allowedRoles.includes(userRole)) {
+                return res.render('accessDenied', {
+                    title: 'Access Denied',
+                    message: 'Classified Information.',
+                });
+            }
 
-                const userRole = results[0].Access_Role;
-                const dept = results[0].Department;
+            // Refresh the token
+            const newToken = jwt.sign(
+                { Reg_No: results[0].Reg_No, Access_Role: results[0].Access_Role, Dept: results[0].Department },
+                process.env.JWT_SECRET,
+                { expiresIn: expTime }
+            );
+            // res.cookie('logintoken', newToken, { httpOnly: true, secure: false, sameSite: 'Strict' });
 
-                if (!allowedRoles.includes(userRole)) {
-                    return res.render('accessDenied', {
-                        title: 'Access Denied',
-                        message: 'Classified Information.',
-                    });
-                }
-
-                req.user = { Reg_No, accessRole: userRole, Dept: dept };
-                next();
-            });
+            req.user = { Reg_No, accessRole: userRole, Dept: dept };
+            next();
         });
-    };
+    });
+};
 };
 // For reference
 //  1.Staff
@@ -137,14 +143,14 @@ db.connect(err => {
 });
 
 setInterval(() => {
-      db.query('SELECT 1', (err, results) => {
+    db.query('SELECT 1', (err, results) => {
         if (err) {
-          console.error('Error keeping MySQL connection alive:', err);
+            console.error('Error keeping MySQL connection alive:', err);
         } else {
-          console.log('MYSQL Connection kept alive');
+            console.log('MYSQL Connection kept alive');
         }
-      });
-    }, 60 * 60 * 1000); 
+    });
+}, 60 * 60 * 1000);
 
 // For the header and footer content
 const expressLayouts = require('express-ejs-layouts');
@@ -285,7 +291,7 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
                                                             }
                                                         }
                                                     }
-                                                    
+
                                                 })
                                                 studentData = Object.entries(studentData).map(([regNo, data]) => ({ regNo, ...data })).sort((a, b) => b.count - a.count)
                                                 let studentData1 = []
@@ -408,7 +414,7 @@ app.post("/login", (req, res) => {
     db.query(query, [Reg_No], (err, result) => {
         if (err) {
             console.error(err);
-            
+
             return res.json({
                 success: false,
                 message: "Error occurred while logging in"
@@ -570,9 +576,9 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
                 console.error('Error fetching records:', err);
                 return res.send('Error fetching records');
             }
- function getOrdinal(num) { 
-    const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]
-} 
+            function getOrdinal(num) {
+                const suffixes = ["st", "nd", "rd", "th", "th"]; return num + suffixes[num - 1]
+            }
 
             let yearWithOrdianal = getOrdinal(Class)
             const title = `${yearWithOrdianal} Year ${Sec}`;

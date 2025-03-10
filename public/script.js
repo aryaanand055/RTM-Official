@@ -1,13 +1,25 @@
 console.log("Script.js running")
+
 document.addEventListener('DOMContentLoaded', function () {
     const alertBox = document.getElementById('alertBox');
+    const closeButton = document.getElementById('closeAlert');
+
     if (alertBox) {
-        setTimeout(() => {
-            alertBox.classList.remove('show');
-            alertBox.addEventListener('transitionend', () => alertBox.remove());
-        }, 4500);
+        alertBox.style.animation = "fadeSlideIn 0.4s ease-out";
+
+        const timeout = setTimeout(() => {
+            alertBox.style.animation = "fadeSlideOut 0.4s ease-in";
+            setTimeout(() => alertBox.remove(), 400);
+        }, 45000);
+
+        closeButton.addEventListener('click', () => {
+            clearTimeout(timeout);
+            alertBox.style.animation = "fadeSlideOut 0.4s ease-in";
+            setTimeout(() => alertBox.remove(), 400);
+        });
     }
 });
+
 
 function adjustFooter() {
     const footer = document.querySelector('.footer1');
@@ -27,25 +39,25 @@ function adjustFooter() {
 });
 
 function showAlert(color, message, callback) {
-    const alertBox = document.getElementById('customAlert');
+    const customAlertBox = document.getElementById('customAlert');
     const alertMessage = document.getElementById('alertMessage');
     const okBtn = document.getElementById("okButton");
 
     alertMessage.textContent = message;
     okBtn.classList.add(`alert-${color}`);
-    alertBox.classList.add(`alert-${color}`);
+    customAlertBox.classList.add(`alert-${color}`);
 
-    okBtn.onclick = function() {
+    okBtn.onclick = function () {
         closeAlert();
         if (callback) {
             callback();
         }
     };
 
-    alertBox.style.display = 'block';
+    customAlertBox.style.display = 'block';
 }
 
 function closeAlert() {
-    const alertBox = document.getElementById('customAlert');
-    alertBox.style.display = 'none';
+    const customAlertBox = document.getElementById('customAlert');
+    customAlertBox.style.display = 'none';
 }

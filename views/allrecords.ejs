@@ -2,22 +2,23 @@
 
 <div class="container mt-5">
   <h2>Attendance Records for <%= title  %></h2>
-  <% if (records.length === 0) { %>
-  <h4 class="m-auto w-100 text-muted">No records found</h44>
-    <% } else { %>
-    <div class="form-group row">
-      <label class="switch my-3 mx-2">
-        <div class="font-weight-bold">Group by Student - </div>
-        <input type="checkbox" id="joinByStudentSwitch">
-        <span for="joinByStudentSwitch" class="slider round"></span>
-      </label>
-      <span class="text-muted mb-3">Enabling the group by student shows the count since previous reset</span>
-      <% if (typeof specificClass === 'undefined') { %>
-      <div class="col-md-3">
-        <label for="yearDropdown">Year of Study</label>
-        <select id="yearDropdown" class="form-control">
-          <option value="">All Years</option>
-          <%  const uniqueYears = records.reduce((acc, record) => {
+  <div class="card-custom p-3">
+    <% if (records.length === 0) { %>
+    <h4 class="m-auto w-100 text-muted">No records found</h44>
+      <% } else { %>
+      <div class="form-group row">
+        <label class="switch my-3 mx-2">
+          <div class="font-weight-bold">Group by Student - </div>
+          <input type="checkbox" id="joinByStudentSwitch">
+          <span for="joinByStudentSwitch" class="slider round"></span>
+        </label>
+        <span class="text-muted mb-3">Enabling the group by student shows the count since previous reset</span>
+        <% if (typeof specificClass === 'undefined') { %>
+        <div class="col-md-3">
+          <label for="yearDropdown">Year of Study</label>
+          <select id="yearDropdown" class="form-control">
+            <option value="">All Years</option>
+            <%  const uniqueYears = records.reduce((acc, record) => {
           if (!acc.includes(record.YearOfStudy)) {
             acc.push(record.YearOfStudy);
           }
@@ -25,18 +26,18 @@
         }, []);  
         uniqueYears.sort();
         %>
-          <% uniqueYears.forEach(year => { %>
-          <option value="<%= year %>">
-            <%= year %>
-          </option>
-          <% }); %>
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label for="sectionDropdown">Section</label>
-        <select id="sectionDropdown" class="form-control" disabled>
-          <option value="">All Sections</option>
-          <%  const uniqueSections = records.reduce((acc, record) => {
+            <% uniqueYears.forEach(year => { %>
+            <option value="<%= year %>">
+              <%= year %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="sectionDropdown">Section</label>
+          <select id="sectionDropdown" class="form-control" disabled>
+            <option value="">All Sections</option>
+            <%  const uniqueSections = records.reduce((acc, record) => {
           if (!acc.includes(record.Section)) {
             acc.push(record.Section);
           }
@@ -44,94 +45,97 @@
         }, []);  
         uniqueSections.sort();
         %>
-          <% uniqueSections.forEach(section => { %>
-          <option value="<%= section %>">
-            <%= section %>
-          </option>
-          <% }); %>
-        </select>
-      </div>
-      <% } %>
+            <% uniqueSections.forEach(section => { %>
+            <option value="<%= section %>">
+              <%= section %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+        <% } %>
 
 
-      <div class="col-md-3">
-        <label for="dateFilter">From Date</label>
-        <input type="date" id="dateFilter" class="form-control">
+        <div class="col-md-3">
+          <label for="dateFilter">From Date</label>
+          <input type="date" id="dateFilter" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label for="dateFilter1">To Date</label>
+          <input type="date" id="dateFilter1" class="form-control">
+        </div>
       </div>
-      <div class="col-md-3">
-        <label for="dateFilter1">To Date</label>
-        <input type="date" id="dateFilter1" class="form-control">
-      </div>
-    </div>
-    <% if (typeof specificClass === 'undefined') { %>
+      <% if (typeof specificClass === 'undefined') { %>
 
-    <label class="switch my-3 mx-2">
-      <div class="font-weight-bold">Group by Class - </div>
-      <input type="checkbox" id="joinByClassSwitch">
-      <span for="joinByClassSwitch" class="slider round"></span>
-    </label>
-    <% } else {%>
+      <label class="switch my-3 mx-2">
+        <div class="font-weight-bold">Group by Class - </div>
+        <input type="checkbox" id="joinByClassSwitch">
+        <span for="joinByClassSwitch" class="slider round"></span>
+      </label>
+      <% } else {%>
       <input type="checkbox" id="joinByClassSwitch" class="d-none">
       <% } %>
-    <div id="table12">
+      <hr class="hr">
+      <div id="table12">
 
-      <table class="table table-striped mt-4" id="detailedTable">
+        <table class="table table-striped mt-4" id="detailedTable">
+          <thead class="thead-dark">
+            <tr>
+              <th>Reg. No.</th>
+              <th>Name</th>
+              <th>Year of Study</th>
+              <th>Section</th>
+              <th>Date and Time <span id="dateSort" style="cursor: pointer;">&#x25B2;</span></th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTable">
+
+            <% records.forEach(record => { %>
+            <tr>
+              <td><%= record.Reg_no %></td>
+              <td><%= record.Student_Name %></td>
+              <td><%= record.YearOfStudy %></td>
+              <td><%= record.Section %></td>
+              <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+              <td><%= record.Reason %></td>
+            </tr>
+            <% }); %>
+
+
+          </tbody>
+        </table>
+        <% if (typeof specificClass === 'undefined') { %>
+
+        <table class="table table-striped mt-4 d-none" id="summaryTable">
+          <thead class="thead-dark">
+            <tr>
+              <th>Year of Study</th>
+              <th>Section</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody">
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+
+      <% } %>
+      <table class="table table-striped mt-4 d-none" id="summaryByStudentsTable">
         <thead class="thead-dark">
           <tr>
             <th>Reg. No.</th>
-            <th>Name</th>
-            <th>Year of Study</th>
-            <th>Section</th>
-            <th>Date and Time <span id="dateSort" style="cursor: pointer;">&#x25B2;</span></th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody id="attendanceTable">
-
-          <% records.forEach(record => { %>
-          <tr>
-            <td><%= record.Reg_no %></td>
-            <td><%= record.Student_Name %></td>
-            <td><%= record.YearOfStudy %></td>
-            <td><%= record.Section %></td>
-            <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-            <td><%= record.Reason %></td>
-          </tr>
-          <% }); %>
-
-
-        </tbody>
-      </table>
-      <% if (typeof specificClass === 'undefined') { %>
-
-      <table class="table table-striped mt-4 d-none" id="summaryTable">
-        <thead class="thead-dark">
-          <tr>
+            <th>Student Name</th>
             <th>Year of Study</th>
             <th>Section</th>
             <th>Count</th>
           </tr>
         </thead>
-        <tbody id="summaryTableBody">
+        <tbody id="summaryByStudentsTableBody">
         </tbody>
       </table>
-      <% } %>
-    </div>
+  </div>
 
-    <% } %>
-    <table class="table table-striped mt-4 d-none" id="summaryByStudentsTable">
-      <thead class="thead-dark">
-        <tr>
-          <th>Reg. No.</th>
-          <th>Student Name</th>
-          <th>Year of Study</th>
-          <th>Section</th>
-          <th>Count</th>
-        </tr>
-      </thead>
-      <tbody id="summaryByStudentsTableBody">
-      </tbody>
-    </table>
 </div>
 
 
@@ -168,7 +172,7 @@
       joinByClassSwitch = document.getElementById('joinByClassSwitch'),
       summaryTableBody = document.getElementById('summaryTableBody');
     <% } %>
-    
+
     const summaryTable = document.getElementById('summaryTable'),
       dateFilter = document.getElementById('dateFilter'),
       dateFilter1 = document.getElementById('dateFilter1'),

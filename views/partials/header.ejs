@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <!-- Meta TAGS -->
+  <meta name="description" content="Website to track the late attendance of students.">
+  <meta name="keywords" content="Late Attendance Tracker, Attendance Management, Late Attendance">
+  <meta name="author" content="Arya Anand">
+
+
+
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <!-- jQuery -->
@@ -21,6 +28,10 @@
 
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/92390b5043.js" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.2.3/dist/lenis.min.js"></script>
 </head>
 
 <body class="main-content">
@@ -37,23 +48,23 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto ">
             <li class="nav-item">
-              <a class="nav-link" href="/lateattendance/dashboard">Dashboard</a>
+              <a class="nav-link text-light" href="/lateattendance/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/lateattendance/lateAbsenceForm">Mark Absence</a>
+              <a class="nav-link text-light" href="/lateattendance/lateAbsenceForm">Mark Absence</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/lateattendance/records">Records</a>
+              <a class="nav-link text-light" href="/lateattendance/records">Records</a>
             </li>
             <% if (isAuthenticated === true) { %>
             <li class="nav-item">
-              <a class="nav-link" href="/lateattendance/logout" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Logout">
+              <a class="nav-link text-light" href="/lateattendance/logout" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Logout">
                 <i class="fa-solid fa-right-from-bracket"></i>
               </a>
             </li>
             <% } else { %>
             <li class="nav-item">
-              <a class="nav-link" href="/lateattendance/login" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Login">
+              <a class="nav-link text-light" href="/lateattendance/login" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Login">
                 <i class="fa-solid fa-right-to-bracket"></i>
               </a>
             </li>
