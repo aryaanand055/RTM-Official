@@ -37,17 +37,6 @@ body {
   right: -80px;
 }
 
-.logo {
-  width: 100%;
-  z-index: -1;
-  opacity: 0.8;
-}
-
-.logo2 {
-  padding-top: 20px;
-  height: 25vh;
-  width: 53vw;
-}
 
 .right-side {
   height: 100vh;
@@ -87,15 +76,7 @@ body {
 }
 
 .logo {
-  height: 43vh;
-  width: 50vw;
-}
-
-.logo2 {
-  padding-top: 20px;
-  height: 25vh;
-  width: 55vw;
-  margin-left: 50px;
+  max-height: 35px;
 }
 
 #cont1 canvas {
@@ -384,4 +365,140 @@ input:checked+.slider:before {
 .alert-red {
   border: 4px solid red;
   background-color: red;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  /* background: transparent; */
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
+
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b9b9b9;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e3e;
+}
+
+* {
+  scrollbar-color: #bfbfbf linear-gradient(to right, #f8f9fa, #e9ecef);
+  scrollbar-width: thick;
+}
+
+/* Custom Navbar */
+.custom-navbar {
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
+  background: rgba(255, 255, 255, 0.6);
+  /* Light with slight transparency */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+  font-size: 1.4rem;
+  font-weight: 460;
+  color: rgba(50, 50, 50, 0.8);
+}
+
+.navbar-nav {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-nav .nav-link {
+  text-decoration: none;
+  font-size: 1rem;
+  color: rgba(80, 80, 80, 0.8);
+  font-weight: 400;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: rgba(50, 50, 50, 1);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-toggler {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .custom-navbar {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .navbar-toggler {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}
+
+/* Sort Button */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sorted-row {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.sort-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.sort-icon:hover {
+  color: #007bff;
+}
+
+.sort-icon.active {
+  /* transform: rotate(180deg); */
+  transform: rotate(180deg) translateY(-4px)
+}
+
+.sort-icon-th {
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.sort-icon-th:hover {
+  color: #007bff;
+
 }

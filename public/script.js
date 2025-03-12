@@ -1,5 +1,6 @@
 console.log("Script.js running")
 
+// Custom alert box
 document.addEventListener('DOMContentLoaded', function () {
     const alertBox = document.getElementById('alertBox');
     const closeButton = document.getElementById('closeAlert');
@@ -20,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-
+// Adjust footer based on screen size
 function adjustFooter() {
     const footer = document.querySelector('.footer1');
     const contentHeight = document.body.offsetHeight + footer.clientHeight; // Total content height
@@ -38,6 +39,7 @@ function adjustFooter() {
     window.addEventListener(event, adjustFooter);
 });
 
+// Custom alert after form submit
 function showAlert(color, message, callback) {
     const customAlertBox = document.getElementById('customAlert');
     const alertMessage = document.getElementById('alertMessage');
@@ -61,3 +63,17 @@ function closeAlert() {
     const customAlertBox = document.getElementById('customAlert');
     customAlertBox.style.display = 'none';
 }
+
+// To enable tooltips
+function enableTooltip() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+}
+document.addEventListener('DOMContentLoaded', function () {
+    enableTooltip()
+})
+
+
+// Custom navbar

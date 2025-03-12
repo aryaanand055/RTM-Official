@@ -66,55 +66,55 @@ app.use((req, res, next) => {
     next();
 });
 
-const authenticateJWT = (allowedRoles = []) =>
+const authenticateJWT = (allowedRoles = []) => {
     return (req, res, next) => {
-    const token = req.cookies.logintoken;
-    if (!token) {
-        return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Please login to continue")}`);
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, resultVer) => {
-        if (err) {
-            console.error(err);
-            return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
+        const token = req.cookies.logintoken;
+        if (!token) {
+            return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Please login to continue")}`);
         }
 
-        const { Reg_No } = resultVer;
-
-        const query = 'SELECT * FROM staff_data WHERE Reg_No = ?';
-        db.query(query, [Reg_No], (err, results) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err, resultVer) => {
             if (err) {
-                console.error("Database error:", err);
-                return res.send(`Database error: ${err}`);
+                console.error(err);
+                return res.redirect(`/lateattendance/login?redirect=${encodeURIComponent(req.originalUrl)}&msg=${encodeURIComponent("Login has expired. Please login again")}`);
             }
 
-            if (results.length === 0) {
-                return res.send("User not found");
-            }
+            const { Reg_No } = resultVer;
 
-            const userRole = results[0].Access_Role;
-            const dept = results[0].Department;
+            const query = 'SELECT * FROM staff_data WHERE Reg_No = ?';
+            db.query(query, [Reg_No], (err, results) => {
+                if (err) {
+                    console.error("Database error:", err);
+                    return res.send(`Database error: ${err}`);
+                }
 
-            if (!allowedRoles.includes(userRole)) {
-                return res.render('accessDenied', {
-                    title: 'Access Denied',
-                    message: 'Classified Information.',
-                });
-            }
+                if (results.length === 0) {
+                    return res.send("User not found");
+                }
 
-            // Refresh the token
-            const newToken = jwt.sign(
-                { Reg_No: results[0].Reg_No, Access_Role: results[0].Access_Role, Dept: results[0].Department },
-                process.env.JWT_SECRET,
-                { expiresIn: expTime }
-            );
-            // res.cookie('logintoken', newToken, { httpOnly: true, secure: false, sameSite: 'Strict' });
+                const userRole = results[0].Access_Role;
+                const dept = results[0].Department;
 
-            req.user = { Reg_No, accessRole: userRole, Dept: dept };
-            next();
+                if (!allowedRoles.includes(userRole)) {
+                    return res.render('accessDenied', {
+                        title: 'Access Denied',
+                        message: 'Classified Information.',
+                    });
+                }
+
+                // Refresh the token
+                const newToken = jwt.sign(
+                    { Reg_No: results[0].Reg_No, Access_Role: results[0].Access_Role, Dept: results[0].Department },
+                    process.env.JWT_SECRET,
+                    { expiresIn: expTime }
+                );
+                res.cookie('logintoken', newToken, { httpOnly: true, secure: false, sameSite: 'Strict' });
+
+                req.user = { Reg_No, accessRole: userRole, Dept: dept };
+                next();
+            });
         });
-    });
-};
+    };
 };
 // For reference
 //  1.Staff

@@ -1,5 +1,5 @@
 <% function getOrdinal(num) { const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]} %>
-<div class="container mt-5">
+<div class="container mt-3">
   <% if (typeof tutor === 'undefined') { %>
   <h2 class="h2">Dashboard</h2>
   <% } else{ %>
@@ -62,45 +62,49 @@
         <input type="checkbox" id="joinByClassSwitch">
         <span for="joinByClassSwitch" class="slider round"></span>
       </label>
+      <div class="table-responsive mt-4">
+        <table class="table table-striped mt-4" id="detailedTable">
+          <thead class="thead-dark">
+            <tr>
+              <th>Reg. No.</th>
+              <th>Name</th>
+              <th>Year of Study</th>
+              <th>Section</th>
+              <th>Date and Time</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTable">
 
-      <table class="table table-striped mt-4" id="detailedTable">
-        <thead class="thead-dark">
-          <tr>
-            <th>Reg. No.</th>
-            <th>Name</th>
-            <th>Year of Study</th>
-            <th>Section</th>
-            <th>Date and Time</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody id="attendanceTable">
 
+            <% records.forEach(record => { %>
+            <tr>
+              <td><%= record.Reg_No %></td>
+              <td><%= record.Student_Name %></td>
+              <td><%= record.YearOfStudy %></td>
+              <td><%= record.Section %></td>
+              <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+              <td><%= record.Reason %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-responsive mt-4">
 
-          <% records.forEach(record => { %>
-          <tr>
-            <td><%= record.Reg_No %></td>
-            <td><%= record.Student_Name %></td>
-            <td><%= record.YearOfStudy %></td>
-            <td><%= record.Section %></td>
-            <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-            <td><%= record.Reason %></td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
+        <table class="table table-striped mt-4 d-none" id="summaryTable">
+          <thead class="thead-dark">
+            <tr>
+              <th>Year of Study</th>
+              <th>Section</th>
+              <th>Count</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody">
+          </tbody>
+        </table>
+      </div>
 
-      <table class="table table-striped mt-4 d-none" id="summaryTable">
-        <thead class="thead-dark">
-          <tr>
-            <th>Year of Study</th>
-            <th>Section</th>
-            <th>Count</th>
-          </tr>
-        </thead>
-        <tbody id="summaryTableBody">
-        </tbody>
-      </table>
     </div>
 
     <hr class="hr">
@@ -334,7 +338,7 @@
       }, {});
       const department = "<%= dept %>".toLocaleLowerCase();
       Object.values(summary).forEach(record => {
-        const row = `<tr onclick="window.location.href = 'records/${department}/${record.YearOfStudy}/${record.Section}'" class="table_link"  data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+        const row = `<tr onclick="window.location.href = 'records/${department}/${record.YearOfStudy}/${record.Section}'" class="table_link"  data-bs-toggle="tooltip" data-bs-placement="right" title="More info" >
   <td>${record.YearOfStudy}</td>
   <td>${record.Section}</td>
   <td>${record.Count}</td>

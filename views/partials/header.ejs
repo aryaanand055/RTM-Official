@@ -7,8 +7,11 @@
   <title>
     <%= title %>
   </title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/lateattendance/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Logo -->
+  <link href="https://psgitech.ac.in/assets/images/favicon.png" rel="shortcut icon">
 
   <!-- Meta TAGS -->
   <meta name="description" content="Website to track the late attendance of students.">
@@ -35,42 +38,42 @@
 </head>
 
 <body class="main-content">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg custom-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand " href="/lateattendance">Attendance Management</a>
-      <div class="d-flex justify-content-end">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
+      <a class="navbar-brand" href="/lateattendance">
+        <img src="https://psgitech.ac.in/assets/images/favicon.png" alt="PSG Tech Logo" class="logo">
+      </a>
+      <a class="navbar-brand" href="/lateattendance">Late Attendance</a>
 
-      <div class="d-flex align-items-end">
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto ">
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/lateattendance/dashboard">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/lateattendance/lateAbsenceForm">Mark Absence</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/lateattendance/records">Records</a>
-            </li>
-            <% if (isAuthenticated === true) { %>
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/lateattendance/logout" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-              </a>
-            </li>
-            <% } else { %>
-            <li class="nav-item">
-              <a class="nav-link text-light" href="/lateattendance/login" data-bs-toggle="tooltip" data-toggle="tooltip" data-placement="left" title="Login">
-                <i class="fa-solid fa-right-to-bracket"></i>
-              </a>
-            </li>
-            <% } %>
-          </ul>
-        </div>
+      <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/lateattendance/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/lateattendance/lateAbsenceForm">Mark Absence</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/lateattendance/records">Records</a>
+          </li>
+          <% if (isAuthenticated === true) { %>
+          <li class="nav-item">
+            <a class="nav-link logout-btn" href="/lateattendance/logout" data-bs-toggle="tooltip" data-placement="left" title="Logout">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+          </li>
+          <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link login-btn" href="/lateattendance/login" data-bs-toggle="tooltip" data-placement="left" title="Login">
+              <i class="fa-solid fa-right-to-bracket"></i>
+            </a>
+          </li>
+          <% } %>
+        </ul>
       </div>
     </div>
   </nav>

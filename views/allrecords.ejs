@@ -1,6 +1,6 @@
 <% function getOrdinal(num) { const suffixes=["st" , "nd" , "rd" , "th" ,"th" ];return num+ suffixes[num -1]} %>
 
-<div class="container mt-5">
+<div class="container mt-3">
   <h2>Attendance Records for <%= title  %></h2>
   <div class="card-custom p-3">
     <% if (records.length === 0) { %>
@@ -76,34 +76,40 @@
       <% } %>
       <hr class="hr">
       <div id="table12">
+        <div class="table-responsive">
 
-        <table class="table table-striped mt-4" id="detailedTable">
-          <thead class="thead-dark">
-            <tr>
-              <th>Reg. No.</th>
-              <th>Name</th>
-              <th>Year of Study</th>
-              <th>Section</th>
-              <th>Date and Time <span id="dateSort" style="cursor: pointer;">&#x25B2;</span></th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody id="attendanceTable">
+          <table class="table table-striped mt-4" id="detailedTable">
+            <thead class="thead-dark">
+              <tr>
+                <th>Reg. No.</th>
+                <th>Name</th>
+                <th>Year of Study</th>
+                <th>Section</th>
+                <th class="sort-icon-th" id="dateSort1">Date and Time
+                  <span id="dateSort" class="sort-icon">
+                    &#x25B2;
+                  </span>
+                </th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTable">
 
-            <% records.forEach(record => { %>
-            <tr>
-              <td><%= record.Reg_no %></td>
-              <td><%= record.Student_Name %></td>
-              <td><%= record.YearOfStudy %></td>
-              <td><%= record.Section %></td>
-              <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
-              <td><%= record.Reason %></td>
-            </tr>
-            <% }); %>
+              <% records.forEach(record => { %>
+              <tr>
+                <td><%= record.Reg_no %></td>
+                <td><%= record.Student_Name %></td>
+                <td><%= record.YearOfStudy %></td>
+                <td><%= record.Section %></td>
+                <td><%= new Date(record.Late_Date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' , hour: '2-digit', minute: '2-digit'}) %></td>
+                <td><%= record.Reason %></td>
+              </tr>
+              <% }); %>
 
 
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
         <% if (typeof specificClass === 'undefined') { %>
 
         <table class="table table-striped mt-4 d-none" id="summaryTable">
@@ -275,7 +281,7 @@
       }, {});
 
       for (const key in summary) {
-        const row = `<tr class="table_link" data-toggle="tooltip" data-placement="right" title = "Click for detailed info" data-bs-original-title="Click for detailed info" data-bs-original-title="Click for detailed info" data-bs-original-title="Click for detailed info"  onclick="window.location.href = 'records/CSE/${summary[key].YearOfStudy}/${summary[key].Section}'">
+        const row = `<tr class="table_link" data-bs-toggle="tooltip" data-bs-placement="right" title = "Click for Class Details"  onclick="window.location.href = 'records/CSE/${summary[key].YearOfStudy}/${summary[key].Section}'">
                       
           <td>${summary[key].YearOfStudy}</td>
                       <td>${summary[key].Section}</td>
@@ -283,14 +289,27 @@
                     </tr>`;
         summaryTableBody.insertAdjacentHTML('beforeend', row);
       }
+      enableTooltip();
     }
     <% } %>
 
-    document.getElementById('dateSort').addEventListener('click', () => {
+
+    document.getElementById('dateSort1').addEventListener('click', () => {
       sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
       const sortedRecords = sortRecordsByDate(filteredRecords, sortOrder);
       renderDetailedTable(sortedRecords);
+
+      // Set animation for the rows and the arrow
+      const tableRows = document.querySelectorAll("#attendanceTable tr");
+      tableRows.forEach(row => row.classList.add("sorted-row"));
+      const sortIcon = document.getElementById('dateSort');
+      if (sortOrder === 'asc') {
+        sortIcon.classList.remove("active");
+      } else {
+        sortIcon.classList.add("active");
+      }
     });
+
 
     <% if (typeof specificClass === 'undefined') { %>
     yearDropdown.addEventListener('change', () => {
@@ -338,7 +357,7 @@
       });
 
       filteredRec.forEach(student => {
-        const row = `<tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=${student.Reg_No}'" class="table_link" data-toggle="tooltip" data-placement="right" title="Click for detailed info" data-bs-original-title="Click for detailed info">
+        const row = `<tr onclick="window.location.href = '/lateattendance/fetchStudentDetails?reg_no=${student.Reg_No}'" class="table_link" data-bs-toggle="tooltip" data-bs-placement="right" title="Click for Student Details">
                   <td>${student.Reg_No}</td>
                   <td>${student.Student_Name}</td>
                   <td>${student.YearOfStudy}</td>
@@ -347,6 +366,7 @@
                 </tr>`;
         t3Body.insertAdjacentHTML('beforeend', row);
       });
+      enableTooltip();
     }
 
     function joinByStudentFunction() {
