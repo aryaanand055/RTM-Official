@@ -167,33 +167,7 @@ input:checked+.slider:before {
   border-radius: 50%;
 }
 
-/* For the message bar */
-/* #alertBox {
-  position: absolute;
-  overflow: hidden;
-}
 
-.progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background-color: #17a2b8;
-  animation: shrink 4.5s linear forwards;
-}
-
-@keyframes shrink {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0;
-  }
-} */
-/* Updated Alert Box */
-/* Alert Box - Matches Bootstrap's Primary Blue */
 #alertBox {
   position: fixed;
   top: 10px;
@@ -228,8 +202,6 @@ input:checked+.slider:before {
 
 .close-btn:hover {
   background: #0b5ed7;
-  /* Slightly Lighter Blue */
-  /* transform: scale(1.1); */
 }
 
 .close-btn:focus {
@@ -244,7 +216,6 @@ input:checked+.slider:before {
   width: 100%;
   height: 4px;
   background: #084298;
-  /* Darker Blue for Contrast */
   animation: shrink 4.5s linear forwards;
 }
 
@@ -397,7 +368,6 @@ input:checked+.slider:before {
   width: 90%;
   margin: 20px auto;
   background: rgba(255, 255, 255, 0.6);
-  /* Light with slight transparency */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
