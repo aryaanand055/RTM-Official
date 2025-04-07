@@ -162,7 +162,7 @@ app.set('layout', 'master');
 // For static css and js
 app.use(express.static('public'));
 
-app.get("/", (req, res) => {
+app.get("/lateattendance/", (req, res) => {
     if (req.isLoggedIn) {
         return res.redirect("/lateattendance/dashboard")
     };
@@ -170,7 +170,7 @@ app.get("/", (req, res) => {
 
 })
 
-app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
+app.get('/lateattendance/dashboard', authenticateJWT([2, 3]), (req, res) => {
     const mesg = req.query.msg;
     const userRegNo = req.user.Reg_No;
     const access_role = req.user.accessRole
@@ -331,7 +331,7 @@ app.get('/dashboard', authenticateJWT([2, 3]), (req, res) => {
     });
 });
 
-app.get('/api/hod-dashboard/daily', authenticateJWT([2, 3]), (req, res) => {
+app.get('/lateattendance/api/hod-dashboard/daily', authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
     db.query(query, [userRegNo], (err, result) => {
@@ -394,7 +394,7 @@ app.get('/api/hod-dashboard/daily', authenticateJWT([2, 3]), (req, res) => {
     });
 });
 
-app.get('/login', checkIfLoggedIn, (req, res) => {
+app.get('/lateattendance/login', checkIfLoggedIn, (req, res) => {
     if (req.isLoggedIn) {
         const redirectUrl = req.query.redirect || '/lateattendance/dashboard';
         const msg = "You are already logged in";
@@ -405,7 +405,7 @@ app.get('/login', checkIfLoggedIn, (req, res) => {
     }
 });
 
-app.post("/login", (req, res) => {
+app.post("/lateattendance/login", (req, res) => {
 
     const Reg_No = req.body.Reg_No;
     const password = req.body.password;
@@ -447,12 +447,12 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/lateattendance/logout', (req, res) => {
     res.clearCookie('logintoken', { httpOnly: true, secure: false, sameSite: 'Strict' });
     res.redirect('/lateattendance/login?msg=' + encodeURIComponent("You have been logged out successfully"));
 });
 
-app.get("/records", authenticateJWT([2, 3]), (req, res) => {
+app.get("/lateattendance/records", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?;";
 
@@ -476,7 +476,7 @@ app.get("/records", authenticateJWT([2, 3]), (req, res) => {
 
 })
 
-app.get('/recordsall', authenticateJWT([2, 3]), (req, res) => {
+app.get('/lateattendance/recordsall', authenticateJWT([2, 3]), (req, res) => {
     const query = 'SELECT * FROM student_data';
 
     db.query(query, (err, results) => {
@@ -490,11 +490,11 @@ app.get('/recordsall', authenticateJWT([2, 3]), (req, res) => {
 
 });
 
-app.get('/lateAbsenceForm', authenticateJWT([1, 2, 3]), (req, res) => {
+app.get('/lateattendance/lateAbsenceForm', authenticateJWT([1, 2, 3]), (req, res) => {
     res.render("lateAbsenceForm", { title: "Late Attendance Form" })
 });
 
-app.get("/records/class", authenticateJWT([2, 3]), (req, res) => {
+app.get("/lateattendance/records/class", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
 
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
@@ -514,7 +514,7 @@ app.get("/records/class", authenticateJWT([2, 3]), (req, res) => {
     });
 });
 
-app.get("/records/dept", authenticateJWT([3]), (req, res) => {
+app.get("/lateattendance/records/dept", authenticateJWT([3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
 
     const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
@@ -540,7 +540,7 @@ app.get("/records/dept", authenticateJWT([3]), (req, res) => {
     });
 });
 
-app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
+app.get("/lateattendance/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
 
     const query0 = "SELECT * FROM staff_data WHERE Reg_No = ?";
@@ -587,7 +587,7 @@ app.get("/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (req, res) => {
     });
 });
 
-app.get('/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
+app.get('/lateattendance/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
     const regNo = req.query.reg_no;
 
     const q = 'SELECT * FROM student_data WHERE Reg_No = ?';
@@ -620,7 +620,7 @@ app.get('/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
     });
 });
 
-app.post('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
+app.post('/lateattendance/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
     const regNo = req.params.Reg_no;
     const query = 'SELECT * FROM student_data WHERE Reg_no = ?';
     db.query(query, [regNo], (err, results) => {
@@ -636,7 +636,7 @@ app.post('/fetch-student/:Reg_no', authenticateJWT([1, 2, 3]), (req, res) => {
 });
 
 
-app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
+app.post('/lateattendance/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
     const rollNumber = req.body.Reg_no2;
     const reason = req.body.reason;
 
@@ -674,7 +674,7 @@ app.post('/save-absence', authenticateJWT([1, 2, 3]), (req, res) => {
     });
 });
 
-app.get('/attendanceRecordsAll', authenticateJWT([3]), (req, res) => {
+app.get('/lateattendance/attendanceRecordsAll', authenticateJWT([3]), (req, res) => {
     const dept = req.user.Dept
     const query = `
         SELECT a.Reg_No, Late_Date, Student_Name, Section, YearOfStudy, Reason

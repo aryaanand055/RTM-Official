@@ -395,7 +395,6 @@ input:checked+.slider:before {
 /* Custom Navbar */
 .custom-navbar {
   width: 90%;
-  max-width: 1200px;
   margin: 20px auto;
   background: rgba(255, 255, 255, 0.6);
   /* Light with slight transparency */
@@ -488,7 +487,6 @@ input:checked+.slider:before {
 }
 
 .sort-icon.active {
-  /* transform: rotate(180deg); */
   transform: rotate(180deg) translateY(-4px)
 }
 
