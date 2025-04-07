@@ -102,6 +102,7 @@
     if (reason === "Others") {
       reason = document.getElementById("otherText").value
     }
+    if (reason.trim() != ""){
     const Reg_no2 = document.getElementById('Reg_no2').value;
 
     const response = await fetch('/lateattendance/save-absence', {
@@ -141,6 +142,9 @@
       }
 
     }
+  } else{
+    showAlert("yellow", "Reason is blank")
+  }
 
 
   });
