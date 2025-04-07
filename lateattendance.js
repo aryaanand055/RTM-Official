@@ -587,7 +587,7 @@ app.get("/lateattendance/records/:Dept/:Class/:Sec", authenticateJWT([2, 3]), (r
     });
 });
 
-app.get('/lateattendance/fetchStudentDetails', authenticateJWT([1, 2, 3]), (req, res) => {
+app.get('/lateattendance/fetchStudentDetails', (req, res) => {
     const regNo = req.query.reg_no;
 
     const q = 'SELECT * FROM student_data WHERE Reg_No = ?';
@@ -692,6 +692,10 @@ app.get('/lateattendance/attendanceRecordsAll', authenticateJWT([3]), (req, res)
         }
     });
 });
+
+app.get("/lateattendance/student", (req, res) => {
+    res.render("student", { title: "Student" })
+})
 
 //Handle the 404
 app.all('*', (req, res) => {
