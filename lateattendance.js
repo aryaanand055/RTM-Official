@@ -494,10 +494,6 @@ app.get('/lateAbsenceForm', authenticateJWT([1, 2, 3]), (req, res) => {
     res.render("lateAbsenceForm", { title: "Late Attendance Form" })
 });
 
-app.get("/resetPassword", (req,res)=>{
-res.render("resetPassword", {title: "Reset Password"})
-    
-});
 
 app.get("/records/class", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
@@ -701,6 +697,16 @@ app.get('/attendanceRecordsAll', authenticateJWT([3]), (req, res) => {
 app.get("/student", (req, res) => {
     res.render("student", { title: "Student" })
 })
+
+// Reset Password
+// Refer to /login
+app.get("/resetPassword", (req,res)=>{
+    res.render("resetpassword", {title: "Reset Password"})
+    });
+    
+    app.post("/resetPassword", (req,res)=>{
+        //Create backend logic here
+    })
 
 //Handle the 404
 app.all('*', (req, res) => {
