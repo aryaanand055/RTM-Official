@@ -494,6 +494,11 @@ app.get('/lateattendance/lateAbsenceForm', authenticateJWT([1, 2, 3]), (req, res
     res.render("lateAbsenceForm", { title: "Late Attendance Form" })
 });
 
+app.get("/lateattendance/resetPassword", (req,res)=>{
+res.render("resetPassword", {title: "Reset Password"})
+    
+});
+
 app.get("/lateattendance/records/class", authenticateJWT([2, 3]), (req, res) => {
     const userRegNo = req.user.Reg_No;
 
