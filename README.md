@@ -1,4 +1,4 @@
-# Attendance Management System
+# late attendance
 
 This project is a web-based attendance management system designed to track students who arrive late. Teachers can scan student ID cards, retrieve the roll number, and display the student's details. A reason for lateness is then entered and saved along with the timestamp in the database for future reference.
 
