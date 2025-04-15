@@ -593,9 +593,9 @@ app.get('/lateattendance/attendanceRecordsAll', authenticateJWT([3, 4]), (req, r
 
     db.query(query, accessRole === 4 ? [] : [dept], (err, records) => {
         if (err) return res.status(500).send('Server error');
-        res.render('allrecords', { 
-            records: records, 
-            title: accessRole === 4 ? 'All Records' : 'All classes', 
+        res.render('allrecords', {
+            records: records,
+            title: accessRole === 4 ? 'All Records' : 'All classes',
             dept: dept,
             msg: msg
         });
@@ -626,14 +626,15 @@ app.post('/lateattendance/admin/upload-student-data', authenticateJWT([3, 4]), u
 
         const values = data.map(row => {
             let dob = row.Date_of_Birth;
+            console.log(dob, typeof (dob), dob instanceof Date)
             if (typeof dob === 'number') {
                 const excelEpoch = new Date(1899, 11, 30);
                 dob = new Date(excelEpoch.getTime() + dob * 24 * 60 * 60 * 1000);
                 dob = dob.toISOString().split('T')[0];
             } else if (dob instanceof Date) {
                 dob = dob.toISOString().split('T')[0];
-            } else if (typeof dob === 'string' && dob.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                // Already YYYY-MM-DD
+            } else if ((typeof dob === 'string' && dob.match(/^\d{4}\/\d{2}\/\d{2}$/)) || (typeof dob === 'string' && dob.match(/^\d{4}-\d{2}-\d{2}$/))) {
+                dob = dob.replaceAll("/", "-")
             } else {
                 dob = null;
             }

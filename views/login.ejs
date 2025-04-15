@@ -57,6 +57,10 @@
         window.location.href = '/lateattendance/lateAbsenceForm';
       } else if (accessRole === 2 || accessRole === 3) {
         window.location.href = '/lateattendance/dashboard';
+      } else if (accessRole === 4) {
+        window.location.href = "/lateattendance/admin"
+      } else {
+        alert("Access role is undefined")
       }
     } else {
       alert(data.message);
