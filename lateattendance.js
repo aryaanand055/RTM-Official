@@ -699,14 +699,60 @@ app.get("/student", (req, res) => {
 })
 
 // Reset Password
-// Refer to /login
-app.get("/resetPassword", (req,res)=>{
-    res.render("resetpassword", {title: "Reset Password"})
+app.get("/resetPassword", (req, res) => {
+    res.render("resetpassword", { title: "Reset Password" })
+});
+
+app.post("/resetPassword", (req, res) => {
+    const Reg_No = req.body.Reg_No;
+    const oPassword = req.body.oPassword;
+    const nPassword = req.body.nPassword;
+
+    const query = "SELECT * FROM staff_data WHERE Reg_No = ?";
+    const query1 = "UPDATE staff_data SET password = ? WHERE Reg_No = ?";
+
+    db.query(query, [Reg_No], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.json({
+                success: false,
+                message: "Database error"
+            });
+        }
+
+        if (result.length === 0) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const currentPassword = result[0].Password;
+
+        if (currentPassword !== oPassword) {
+            return res.json({
+                success: false,
+                result:result,
+                message: `Old password does not match`
+            });
+        }
+
+        db.query(query1, [nPassword, Reg_No], (err, updateResult) => {
+            if (err) {
+                console.error(err);
+                return res.json({
+                    success: false,
+                    message: "Error updating password"
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: "Password changed successfully"
+            });
+        });
     });
-    
-    app.post("/resetPassword", (req,res)=>{
-        //Create backend logic here
-    })
+});
 
 //Handle the 404
 app.all('*', (req, res) => {
