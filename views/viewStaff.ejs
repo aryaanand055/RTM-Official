@@ -1,0 +1,46 @@
+<h1><%- title %></h1>
+<% if (typeof msg !== 'undefined' && msg) { %>
+    <p style="color: green;"><%= msg %></p>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (staff && staff.length > 0) { %>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Register Number</th>
+                <th>Password</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Email</th>
+                <th>Mobile No</th>
+                <th>Access Role</th>
+                <th>Year of Class</th>
+                <th>Section</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% staff.forEach(member => { %>
+                <tr>
+                    <td><%= member.Reg_No %></td>
+                    <td><%= member.Password || 'N/A' %></td>
+                    <td><%= member.Staff_Name || 'N/A' %></td>
+                    <td><%= member.Department || 'N/A' %></td>
+                    <td><%= member.Mail_Id || 'N/A' %></td>
+                    <td><%= member.Mob_No || 'N/A' %></td>
+                    <td><%= member.Access_Role || 'N/A' %></td>
+                    <td><%= member.YearOfClass || 'N/A' %></td>
+                    <td><%= member.Section || 'N/A' %></td>
+                    <td><a href="/lateattendance/admin/edit-staff/<%= member.Reg_No %>">Edit</a></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No staff found.</p>
+<% } %>
+<p><a href="/lateattendance/admin">Back to Admin Dashboard</a></p>
+<p><a href="/lateattendance/dashboard">View Dashboard</a></p>
+<p><a href="/lateattendance/records">View Records</a></p>

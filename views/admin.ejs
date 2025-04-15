@@ -1,0 +1,23 @@
+<h1><%- title %></h1>
+<% if (typeof message !== 'undefined' && message) { %>
+    <p style="color: green;"><%= message %></p>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<h2>Upload Student Data</h2>
+<form action="/lateattendance/admin/upload-student-data" method="POST" enctype="multipart/form-data">
+    <label for="excel">Upload Student Data Excel:</label>
+    <input type="file" name="excel" accept=".xlsx, .xls" required>
+    <button type="submit">Upload</button>
+</form>
+<h2>Upload Staff Data</h2>
+<form action="/lateattendance/admin/upload-staff-data" method="POST" enctype="multipart/form-data">
+    <label for="excel">Upload Staff Data Excel:</label>
+    <input type="file" name="excel" accept=".xlsx, .xls" required>
+    <button type="submit">Upload</button>
+</form>
+<p><a href="/lateattendance/dashboard">View Dashboard</a></p>
+<p><a href="/lateattendance/records">View Records</a></p>
+<p><a href="/lateattendance/admin/view-students">View Uploaded Students</a></p>
+<p><a href="/lateattendance/admin/view-staff">View Uploaded Staff</a></p>
