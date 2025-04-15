@@ -1,0 +1,48 @@
+<h1><%- title %></h1>
+<% if (typeof msg !== 'undefined' && msg) { %>
+    <p style="color: green;"><%= msg %></p>
+<% } %>
+<% if (typeof error !== 'undefined' && error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<% if (students && students.length > 0) { %>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Register Number</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Year</th>
+                <th>Section</th>
+                <th>Gender</th>
+                <th>Date of Birth</th>
+                <th>Mobile No</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% students.forEach(student => { %>
+                <tr>
+                    <td><%= student.Reg_No %></td>
+                    <td><%= student.Student_Name %></td>
+                    <td><%= student.Department %></td>
+                    <td><%= student.YearOfStudy %></td>
+                    <td><%= student.Section %></td>
+                    <td><%= student.Gender || 'N/A' %></td>
+                    <td><%= student.DOB ? new Date(student.DOB).toISOString().split('T')[0] : 'N/A' %></td>
+                    <td><%= student.Mob_no || 'N/A' %></td>
+                    <td><%= student.Mail_id || 'N/A' %></td>
+                    <td><%= student.Residence || 'N/A' %></td>
+                    <td><a href="/lateattendance/admin/edit-student/<%= student.Reg_No %>">Edit</a></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <p>No students found.</p>
+<% } %>
+<p><a href="/lateattendance/admin">Back to Admin Dashboard</a></p>
+<p><a href="/lateattendance/dashboard">View Dashboard</a></p>
+<p><a href="/lateattendance/records">View Records</a></p>

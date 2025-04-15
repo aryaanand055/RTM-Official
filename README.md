@@ -1,4 +1,4 @@
-# Attendance Management System
+# late attendancec
 
 This project is a web-based attendance management system designed to track students who arrive late. Teachers can scan student ID cards, retrieve the roll number, and display the student's details. A reason for lateness is then entered and saved along with the timestamp in the database for future reference.
 
@@ -35,6 +35,7 @@ This project is a web-based attendance management system designed to track stude
 3. **Set Up the Database**
 Create a MySQL database for the attendance management system. Use the following SQL commands to create the necessary tables:
 ```
+
 CREATE TABLE Student_Data (
     Reg_No CHAR(15) PRIMARY KEY,
     Student_Name VARCHAR(50) NOT NULL UNIQUE,

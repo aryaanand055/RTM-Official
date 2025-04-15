@@ -470,3 +470,52 @@ input:checked+.slider:before {
   color: #007bff;
 
 }
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+form {
+  margin: 20px 0;
+}
+
+input,
+button {
+  padding: 8px;
+  margin: 5px;
+}
+
+p {
+  margin: 10px 0;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+body { font-family: Arial, sans-serif; margin: 20px; }
+form { margin: 20px 0; }
+input, button { padding: 8px; margin: 5px; width: 300px; }
+button { width: auto; cursor: pointer; }
+label { display: inline-block; width: 150px; }
+p { margin: 10px 0; }
+h2 { margin-top: 30px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background-color: #f2f2f2; }

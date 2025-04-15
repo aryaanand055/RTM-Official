@@ -1,0 +1,36 @@
+<h1><%- title %></h1>
+<% if (typeof error !== 'undefined' && error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+<form action="/lateattendance/admin/update-staff/<%= staff.Reg_No %>" method="POST">
+    <label for="Reg_No">Register Number (Read-only):</label><br>
+    <input type="text" id="Reg_No" name="Reg_No" value="<%= staff.Reg_No %>" readonly><br><br>
+    
+    <label for="Password">Password:</label><br>
+    <input type="text" id="Password" name="Password" value="<%= staff.Password || '' %>"><br><br>
+    
+    <label for="Staff_Name">Name:</label><br>
+    <input type="text" id="Staff_Name" name="Staff_Name" value="<%= staff.Staff_Name || '' %>"><br><br>
+    
+    <label for="Department">Department (max 5 chars):</label><br>
+    <input type="text" id="Department" name="Department" value="<%= staff.Department || '' %>" maxlength="5"><br><br>
+    
+    <label for="Mail_Id">Email:</label><br>
+    <input type="email" id="Mail_Id" name="Mail_Id" value="<%= staff.Mail_Id || '' %>"><br><br>
+    
+    <label for="Mob_No">Mobile No (10-15 digits):</label><br>
+    <input type="text" id="Mob_No" name="Mob_No" value="<%= staff.Mob_No || '' %>"><br><br>
+    
+    <label for="Access_Role">Access Role (1-4):</label><br>
+    <input type="number" id="Access_Role" name="Access_Role" value="<%= staff.Access_Role || '' %>" min="1" max="4"><br><br>
+    
+    <label for="YearOfClass">Year of Class:</label><br>
+    <input type="number" id="YearOfClass" name="YearOfClass" value="<%= staff.YearOfClass || '' %>"><br><br>
+    
+    <label for="Section">Section (max 2 chars):</label><br>
+    <input type="text" id="Section" name="Section" value="<%= staff.Section || '' %>" maxlength="2"><br><br>
+    
+    <button type="submit">Save Changes</button>
+</form>
+<p><a href="/lateattendance/admin/view-staff">Back to Staff List</a></p>
+<p><a href="/lateattendance/admin">Admin Dashboard</a></p>
